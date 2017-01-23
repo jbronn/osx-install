@@ -2,16 +2,16 @@
 set -ex
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
-NAME=xz
-IDENTIFIER="org.tukaani.pkg.xz"
-VERSION=5.2.3
+NAME=libpng
+IDENTIFIER="org.libpng.pkg.libpng"
+VERSION=1.6.28
 VERNAME=$NAME-$VERSION
-CHKSUM=71928b357d0a09a12a4b4c5fafca8c31c19b0e7d3b8ebb19622e96f26dbf28cb
+CHKSUM=b6cec903e74e9fdd7b5bbcde0ab2415dd12f2f9e84d9e4d9ddd2ba26a41623b2
 TARFILE=$VERNAME.tar.gz
-URL=http://tukaani.org/xz/$TARFILE
+URL=ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/$TARFILE
 
-# Lasse Collin <lasse.collin@tukaani.org>
-KEYID=38EE757D69184620
+# Glenn Randers-Pehrson (libpng) <glennrp@users.sourceforge.net>
+KEYID=8048643BA2C840F4F92A195FF54984BFA16C640F
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
@@ -25,8 +25,8 @@ if [ ! -r $TARFILE ]; then
     curl -O $URL
 fi
 
-if [ ! -r $TARFILE.sig ]; then
-    curl -O $URL.sig
+if [ ! -r $TARFILE.asc ]; then
+    curl -O $URL.asc
 fi
 
 
@@ -35,18 +35,16 @@ test -x /usr/local/bin/gpg || (echo "GnuPG required for verification" && exit 1)
 
 if [ ! -d $VERNAME ]; then
     gpg --list-keys $KEYID || gpg --keyserver keys.gnupg.net --recv-keys $KEYID
-    gpg --verify $TARFILE.sig || (echo "Can't verify tarball." && exit 1)
-
+    gpg --verify $TARFILE.asc || (echo "Can't verify tarball." && exit 1)
+    
     echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
     tar xzf $TARFILE
 fi
-
 
 # Configure.
 cd $VERNAME
 if [ ! -r Makefile ]; then
     ./configure \
-        --disable-debug \
         --disable-dependency-tracking \
         --disable-silent-rules \
         --prefix=/usr/local
@@ -56,6 +54,7 @@ fi
 if [ ! -r $PKG ]; then
     make clean
     make
+    make test
     rm -fr $STAGING
     make install DESTDIR=$STAGING
     pkgbuild --root $STAGING --identifier "${IDENTIFIER}" --version $VERSION $PKG

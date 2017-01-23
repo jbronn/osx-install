@@ -4,21 +4,24 @@ set -ex
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=pypa
 IDENTIFIER="org.python.pkg.pypa"
-VERSION=1.0.0
+VERSION=1.1.0
 VERNAME=$NAME-$VERSION
 PYPI_URL=https://pypi.python.org/pypi
 
 # Preparations.
-SETUPTOOLS_VERSION=24.0.3
-PIP_VERSION=8.1.2
+SETUPTOOLS_VERSION=33.1.1
+PIP_VERSION=9.0.1
 PY2_VERSION=2.7
-PY3_VERSION=3.5
-VIRTUALENV_VERSION=15.0.2
+PY3_VERSION=3.6
+VIRTUALENV_VERSION=15.1.0
 WHEEL_VERSION=0.29.0
 
 BUILD=$INSTALL/build/$NAME
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
+
+# Donald Stufft (dstufft) <donald@stufft.io>
+KEYID=7C6B7C5D5E2B6356A926F04F6E3CBCE93372DCFA
 
 # Wheel files.
 SETUPTOOLS_WHEEL=setuptools-$SETUPTOOLS_VERSION-py2.py3-none-any.whl
@@ -28,7 +31,9 @@ WHEEL_WHEEL=wheel-$WHEEL_VERSION-py2.py3-none-any.whl
 
 cd $BUILD
 
-# TODO: Checksums and GPG verify (pip only).
+test -x /usr/local/bin/gpg || (echo "GnuPG required for verification" && exit 1)
+gpg --list-keys $KEYID || gpg --keyserver keys.gnupg.net --recv-keys $KEYID
+
 if [ ! -r $SETUPTOOLS_WHEEL ]; then
     SETUPTOOLS_URL=$(curl $PYPI_URL/setuptools/json | ./pypi.py $SETUPTOOLS_VERSION)
     curl -O $SETUPTOOLS_URL
@@ -37,11 +42,15 @@ fi
 if [ ! -r $PIP_WHEEL ]; then
     PIP_URL=$(curl $PYPI_URL/pip/json | ./pypi.py $PIP_VERSION)
     curl -O $PIP_URL
+    curl -O $PIP_URL.asc
+    gpg --verify $PIP_WHEEL.asc || (echo "Can't verify tarball." && rm -fv $PIP_WHEEL && exit 1)
 fi
 
 if [ ! -r $VIRTUALENV_WHEEL ]; then
     VIRTUALENV_URL=$(curl $PYPI_URL/virtualenv/json | ./pypi.py $VIRTUALENV_VERSION)
     curl -O $VIRTUALENV_URL
+    curl -O $VIRTUALENV_URL.asc
+    gpg --verify $VIRTUALENV_WHEEL.asc || (echo "Can't verify tarball." && rm -fv $VIRTUALENV_WHEEL && exit 1)
 fi
 
 if [ ! -r $WHEEL_WHEEL ]; then

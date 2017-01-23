@@ -3,9 +3,9 @@ set -ex
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=emacs
-VERSION=24.5
+VERSION=25.1
 VERNAME=$NAME-$VERSION
-CHKSUM=2737a6622fb2d9982e9c47fb6f2fb297bda42674e09db40fc9bcc0db4297c3b6
+CHKSUM=763344b90db4d40e9fe90c5d14748a9dbd201ce544e2cf0835ab48a0aa4a1c67
 TARFILE=$VERNAME.tar.gz
 URL=https://ftp.gnu.org/gnu/emacs/$TARFILE
 

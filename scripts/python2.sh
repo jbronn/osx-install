@@ -4,9 +4,9 @@ set -ex
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=Python
 IDENTIFIER="org.python.pkg.python2"
-VERSION=2.7.12
+VERSION=2.7.13
 VERNAME=$NAME-$VERSION
-CHKSUM=3cb522d17463dfa69a155ab18cffa399b358c966c0363d6c8b5b3bf1384da4b6
+CHKSUM=a4f05a0720ce0fd92626f0278b6b433eee9a6173ddf2bced7957dfb599a5ece1
 TARFILE=$VERNAME.tgz
 URL=https://www.python.org/ftp/python/$VERSION/$TARFILE
 
@@ -18,19 +18,25 @@ BUILD=$INSTALL/build/$NAME
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 
+# Download
 mkdir -p $BUILD
-
 cd $BUILD
 if [ ! -r $TARFILE ]; then
     curl -O $URL
-    echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c - || (echo "Invalid checksum" && rm -v $TARFILE && exit 1)
 fi
 
-# Verify the tarball.
-if [ ! -d $VERNAME ]; then
+if [ ! -r $TARFILE.asc ]; then
     curl -O $URL.asc
+fi
+
+# Verify and extract.
+test -x /usr/local/bin/gpg || (echo "GnuPG required for verification" && exit 1)
+
+if [ ! -d $VERNAME ]; then
     gpg --list-keys $KEYID || gpg --keyserver keys.gnupg.net --recv-keys $KEYID
     gpg --verify $TARFILE.asc || (echo "Can't verify tarball." && exit 1)
+
+    echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
     tar xzf $TARFILE
 fi
 
@@ -46,9 +52,11 @@ fi
 
 # Package.
 if [ ! -r $PKG ]; then
-    make clean
-    make
-    make quicktest
+    #make clean
+    #make
+    #make quicktest
+
+    rm -fr $STAGING
     make install DESTDIR=$STAGING PYTHONAPPSDIR=/usr/local
     rm -fr $STAGING/usr/local/*.app
 
@@ -57,6 +65,6 @@ if [ ! -r $PKG ]; then
     ln -s /Library/Frameworks/Python.framework/Versions/2.7/lib/pkgconfig/python-2.7.pc $STAGING/usr/local/lib/pkgconfig
     ln -s /Library/Frameworks/Python.framework/Versions/2.7/lib/pkgconfig/python2.pc $STAGING/usr/local/lib/pkgconfig
     ln -s /Library/Frameworks/Python.framework/Versions/2.7/lib/pkgconfig/python.pc $STAGING/usr/local/lib/pkgconfig
-    
+
     pkgbuild --root $STAGING --identifier "${IDENTIFIER}" --version $VERSION $PKG
 fi

@@ -4,9 +4,9 @@ set -ex
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=Python
 IDENTIFIER="org.python.pkg.python3"
-VERSION=3.5.2
+VERSION=3.5.3
 VERNAME=$NAME-$VERSION
-CHKSUM=1524b840e42cf3b909e8f8df67c1724012c7dc7f9d076d4feef2d3eff031e8a0
+CHKSUM=d8890b84d773cd7059e597dbefa510340de8336ec9b9e9032bf030f19291565a
 TARFILE=$VERNAME.tgz
 URL=https://www.python.org/ftp/python/$VERSION/$TARFILE
 
@@ -18,19 +18,25 @@ BUILD=$INSTALL/build/$NAME
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 
+# Download.
 mkdir -p $BUILD
-
 cd $BUILD
 if [ ! -r $TARFILE ]; then
     curl -O $URL
-    echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c - || (echo "Invalid checksum" && rm -v $TARFILE && exit 1)
 fi
 
-# Verify the tarball.
-if [ ! -d $VERNAME ]; then
+if [ ! -r $TARFILE.asc ]; then
     curl -O $URL.asc
+fi
+
+# Verify and extract.
+test -x /usr/local/bin/gpg || (echo "GnuPG required for verification" && exit 1)
+
+if [ ! -d $VERNAME ]; then
     gpg --list-keys $KEYID || gpg --keyserver keys.gnupg.net --recv-keys $KEYID
     gpg --verify $TARFILE.asc || (echo "Can't verify tarball." && exit 1)
+
+    echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
     tar xzf $TARFILE
 fi
 
@@ -52,7 +58,8 @@ if [ ! -r $PKG ]; then
 
     # TODO: Figure out why popen test is failing.
     make quicktest || true
-
+    
+    rm -fr $STAGING
     make install DESTDIR=$STAGING PYTHONAPPSDIR=/usr/local
     rm -fr $STAGING/usr/local/*.app
     rm -fr $STAGING/usr/local/bin/2to3*

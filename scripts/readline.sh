@@ -4,15 +4,15 @@ set -ex
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=readline
 IDENTIFIER="org.gnu.pkg.readline"
-VERSION=6.3
+VERSION=7.0
 VERNAME=$NAME-$VERSION
-CHKSUM=56ba6071b9462f980c5a72ab0023893b65ba6debb4eeb475d7a563dc65cafd43
+CHKSUM=750d437185286f40a369e1e4f4764eda932b9459b5ec9a731628393dd3d32334
 TARFILE=$VERNAME.tar.gz
 URL=https://ftp.gnu.org/gnu/readline/$TARFILE
 
 COMPACTVERSION=$(echo $VERSION | tr -d .)
 PATCHURL=https://ftp.gnu.org/gnu/readline/$VERNAME-patches
-PATCHVERSION=8
+PATCHVERSION=1
 
 # Chet Ramey <chet@cwru.edu>
 KEYID=BB5869F064EA74AB
@@ -67,7 +67,9 @@ done
 # Configure.
 cd $VERNAME
 if [ ! -r Makefile ]; then
-    ./configure --prefix=/usr/local --enable-multibyte
+    ./configure \
+        --prefix=/usr/local \
+        --enable-multibyte
 fi
 
 # Build, stage, and package.
@@ -77,6 +79,9 @@ if [ ! -r $PKG ]; then
 
     rm -fr $STAGING
     make install DESTDIR=$STAGING
+
+    mkdir -p $STAGING/usr/local/lib/pkgconfig
+    cp -v $BUILD/$VERNAME/readline.pc $STAGING/usr/local/lib/pkgconfig
 
     rmdir $STAGING/usr/local/bin
     pkgbuild --root $STAGING --identifier "$IDENTIFIER" --version $VERSION.$PATCHVERSION $PKG

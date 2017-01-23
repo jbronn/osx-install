@@ -4,9 +4,9 @@ set -ex
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=gnupg
 IDENTIFIER="org.gnu.pkg.gnupg"
-VERSION=1.4.20
+VERSION=1.4.21
 VERNAME=$NAME-$VERSION
-CHKSUM=04988b1030fa28ddf961ca8ff6f0f8984e0cddcb1eb02859d5d8fe0fe237edcc
+CHKSUM=6b47a3100c857dcab3c60e6152e56a997f2c7862c1b8b2b25adf3884a1ae2276
 TARFILE=$VERNAME.tar.bz2
 URL=https://gnupg.org/ftp/gcrypt/gnupg/$TARFILE
 
@@ -32,6 +32,7 @@ fi
 cd $VERNAME
 if [ ! -r Makefile ]; then
     ./configure \
+        CFLAGS=-I/usr/local/include \
         --disable-dependency-tracking \
         --disable-silent-rules \
         --disable-asm \

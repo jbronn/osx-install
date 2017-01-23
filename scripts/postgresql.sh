@@ -4,9 +4,9 @@ set -ex
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=postgresql
 IDENTIFIER="org.postgresql.pkg.postgresql"
-VERSION=9.5.3
+VERSION=9.5.5
 VERNAME=$NAME-$VERSION
-CHKSUM=7385c01dc58acba8d7ac4e6ad42782bd7c0b59272862a3a3d5fe378d4503a0b4
+CHKSUM=02c65290be74de6604c3fed87c9fd3e6b32e949f0ab8105a75bd7ed5aa71f394
 TARFILE=$VERNAME.tar.bz2
 URL=https://ftp.postgresql.org/pub/source/v$VERSION/$VERNAME.tar.bz2
 
@@ -32,6 +32,8 @@ fi
 cd $VERNAME
 if [ ! -r GNUMakefile ]; then
     ./configure \
+        CFLAGS=-I/usr/local/include \
+        LDFLAGS=-L/usr/local/lib \
         MACOSX_DEPLOYMENT_TARGET=10.11 \
         --prefix=/usr/local \
         --disable-debug \
@@ -55,7 +57,7 @@ if [ ! -r $PKG ]; then
     make check
 
     rm -fr $STAGING
-    make install DESTDIR=$STAGING
+    make install-world DESTDIR=$STAGING
 
     pkgbuild --root $STAGING --identifier "${IDENTIFIER}" --version $VERSION $PKG
 fi
