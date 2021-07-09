@@ -47,6 +47,5 @@ cd $VERNAME
 # Package.
 rm -fr $PKGDIR/Emacs.app $INSTALL/pkg/Emacs.app
 make install
-cp -v $BUILD/site-lisp/*.el nextstep/Emacs.app/Contents/Resources/site-lisp
 # Move application bundle (this isn't a `.pkg` that requires root).
 mv -v nextstep/Emacs.app $PKGDIR
