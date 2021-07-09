@@ -1,20 +1,23 @@
 #!/bin/bash
-set -ex
+set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
-NAME=xz
-IDENTIFIER="org.tukaani.pkg.xz"
-VERSION=5.2.5
+NAME=gettext
+IDENTIFIER="org.gnu.pkg.${NAME}"
+VERSION=0.21
 VERNAME=$NAME-$VERSION
-CHKSUM=f6f4910fd033078738bd82bfba4f49219d03b17eb0794eb91efbae419f4aba10
+CHKSUM=c77d0da3102aec9c07f43671e60611ebff89a996ef159497ce8e59d075786b12
 TARFILE=$VERNAME.tar.gz
-URL=http://tukaani.org/xz/$TARFILE
+URL=https://ftp.gnu.org/gnu/gettext/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
 KEYRING=$INSTALL/keyring/$NAME.gpg
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
+
+# Check prereqs.
+test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
 
 # Download.
 mkdir -p $BUILD
@@ -27,10 +30,9 @@ if [ ! -r $TARFILE.sig ]; then
 fi
 
 # Verify and extract.
-test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-# Lasse Collin <lasse.collin@tukaani.org>, GnuPG keyid 38EE757D69184620.
+# Bruno Haible (Open Source Development) <bruno@clisp.org>, GnuPG keyid: F5BE8B267C6A406D
 gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
 tar xzf $TARFILE
 
@@ -38,13 +40,25 @@ tar xzf $TARFILE
 cd $VERNAME
 ./configure \
     --prefix=/usr/local \
+    --disable-charp \
     --disable-debug \
     --disable-dependency-tracking \
-    --disable-silent-rules
+    --disable-java \
+    --disable-silent-rules \
+    --with-emacs \
+    --with-included-gettext \
+    --with-included-glib \
+    --with-included-libcroco \
+    --with-included-libunistring \
+    --with-included-libxml \
+    --without-cvs \
+    --without-git \
+    --without-xz
 
 # Compile and stage.
 make clean
 make
+#make check || true
 rm -fr $STAGING
 make install DESTDIR=$STAGING
 

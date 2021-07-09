@@ -2,18 +2,23 @@
 set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
-NAME=libpng
-IDENTIFIER="org.libpng.pkg.libpng"
-VERSION=1.6.37
+NAME=nettle
+IDENTIFIER="org.gnu.pkg.${NAME}"
+VERSION=3.7.3
 VERNAME=$NAME-$VERSION
-CHKSUM=daeb2620d829575513e35fecc83f0d3791a620b9b93d800b763542ece9390fb4
+CHKSUM=661f5eb03f048a3b924c3a8ad2515d4068e40f67e774e8a26827658007e3bcf0
 TARFILE=$VERNAME.tar.gz
-URL=http://prdownloads.sourceforge.net/libpng/$TARFILE
+URL=https://ftp.gnu.org/gnu/nettle/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
+KEYRING=$INSTALL/keyring/$NAME.gpg
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
+
+# Check prereqs.
+test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
+test -r /usr/local/lib/libgmp.dylib || (echo "gmp required to be installed" && exit 1)
 
 # Download.
 mkdir -p $BUILD
@@ -21,10 +26,15 @@ cd $BUILD
 if [ ! -r $TARFILE ]; then
     curl -LO $URL
 fi
+if [ ! -r $TARFILE.sig ]; then
+    curl -LO $URL.sig
+fi
 
 # Verify and extract.
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
+# Niels Möller <nisse@lysator.liu.se>, GnuPG keyid: F3599FF828C67298
+gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
 tar xzf $TARFILE
 
 # Configure.
@@ -32,19 +42,18 @@ cd $VERNAME
 ./configure \
     --prefix=/usr/local \
     --disable-dependency-tracking \
-    --disable-silent-rules \
-    --disable-static
+    --disable-openssl \
+    --disable-static \
+    --enable-shared
 
-# Compile and stage.
+# Compile and stage
 make clean
 make
-make test
+make check || true
 rm -fr $STAGING
 make install DESTDIR=$STAGING
-sed -i -e 's/^Requires: zlib//' $STAGING/usr/local/lib/pkgconfig/libpng16.pc
-sed -i -e 's/^Libs.private: -lz//' $STAGING/usr/local/lib/pkgconfig/libpng16.pc
 
-# Package.
+# Package
 rm -f $PKG $INSTALL/pkg/$NAME.pkg
 pkgbuild --root $STAGING --identifier "${IDENTIFIER}" --version $VERSION $PKG
 ln -s $PKG $INSTALL/pkg/$NAME.pkg

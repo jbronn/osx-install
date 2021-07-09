@@ -4,9 +4,45 @@ This is a collection of some build scripts that will download what *I* need, and
 
 ## Usage
 
-Just run the relevant build script from [`scripts`](./scripts), and the package will appear in the [`pkg`](./pkg) subdirectory.  The only time you'll need privileges is when installing the actual `.pkg` file, like a normal OS X user.
+Just run the relevant build script from [`scripts`](./scripts), and the package will appear in the [`pkg`](./pkg) subdirectory.  The only time you'll need privileges is when installing the actual `.pkg` file, like a normal OS X user.  Described below is the order for building:
 
-Some depend on the presence on others (e.g., Python 2/3 need OpenSSL, GNU Readline, and pkg-config), and I'll compose meta packages when I get the time.
+Build and install GnuPG:
+
+```
+./scripts/gnupg.sh && sudo installer -pkg pkg/gnupg.pkg -target /
+```
+
+Now do basic libraries, starting with `pkg-config`:
+
+```
+for pkg in pkg-config readline xz; do
+  ./scripts/${pkg}.sh
+  sudo installer -pkg pkg/${pkg}.pkg -target /
+done
+```
+
+GnuTLS and its prereqs are needed for Emacs:
+
+```
+for pkg in gmp nettle gettext gnutls jansson; do
+  ./scripts/${pkg}.sh
+  sudo installer -pkg pkg/${pkg}.pkg -target /
+done
+```
+
+Emacs is built as a normal macOS app:
+
+```
+./scripts/emacs.sh
+# Drag pkg/emacs/27.2/Emacs.app /Applications
+```
+
+OpenSSL is required for Python and PostgreSQL:
+
+```
+./scripts/openssl.sh && sudo installer -pkg pkg/openssl.pkg -target /
+```
+
 
 ## Why not alternatives?
 

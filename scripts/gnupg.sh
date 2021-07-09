@@ -1,12 +1,12 @@
 #!/bin/bash
-set -ex
+set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=gnupg
-IDENTIFIER="org.gnu.pkg.gnupg"
-VERSION=1.4.21
+IDENTIFIER="org.gnu.pkg.${NAME}"
+VERSION=1.4.23
 VERNAME=$NAME-$VERSION
-CHKSUM=6b47a3100c857dcab3c60e6152e56a997f2c7862c1b8b2b25adf3884a1ae2276
+CHKSUM=c9462f17e651b6507848c08c430c791287cd75491f8b5a8b50c6ed46b12678ba
 TARFILE=$VERNAME.tar.bz2
 URL=https://gnupg.org/ftp/gcrypt/gnupg/$TARFILE
 
@@ -23,27 +23,27 @@ if [ ! -r $TARFILE ]; then
 fi
 
 # Verify checksum and extract.
-if [ ! -d $VERNAME ]; then
-    echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-    tar xjf $TARFILE
-fi
+rm -fr $VERNAME
+echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
+tar xjf $TARFILE
 
 # Configure.
 cd $VERNAME
-if [ ! -r Makefile ]; then
-    ./configure \
-        CFLAGS=-I/usr/local/include \
-        --disable-dependency-tracking \
-        --disable-silent-rules \
-        --disable-asm \
-        --prefix=/usr/local
-fi
+./configure \
+    CFLAGS=-I/usr/local/include \
+    --disable-dependency-tracking \
+    --disable-silent-rules \
+    --disable-asm \
+    --prefix=/usr/local
+
+# Compile and stage.
+make clean
+make
+make check
+rm -fr $STAGING
+make install DESTDIR=$STAGING
 
 # Package.
-if [ ! -r $PKG ]; then
-    make clean
-    make
-    make check
-    make install DESTDIR=$STAGING
-    pkgbuild --root $STAGING --identifier "${IDENTIFIER}" --version $VERSION $PKG
-fi
+rm -f $PKG $INSTALL/pkg/$NAME.pkg
+pkgbuild --root $STAGING --identifier "${IDENTIFIER}" --version $VERSION $PKG
+ln -s $PKG $INSTALL/pkg/$NAME.pkg

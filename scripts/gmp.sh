@@ -2,13 +2,13 @@
 set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
-NAME=pkg-config
-IDENTIFIER="org.freedesktop.pkg.pkg-config"
-VERSION=0.29.2
+NAME=gmp
+IDENTIFIER="org.gnu.pkg.${NAME}"
+VERSION=6.2.1
 VERNAME=$NAME-$VERSION
-CHKSUM=6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591
-TARFILE=$VERNAME.tar.gz
-URL=https://pkgconfig.freedesktop.org/releases/$TARFILE
+CHKSUM=eae9326beb4158c386e39a356818031bd28f3124cf915f8c5b1dc4c7a36b4d7c
+TARFILE=$VERNAME.tar.bz2
+URL=https://gmplib.org/download/gmp/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
@@ -16,33 +16,35 @@ KEYRING=$INSTALL/keyring/$NAME.gpg
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 
-mkdir -p $BUILD
+# Check prereqs.
+test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
 
+# Download.
+mkdir -p $BUILD
 cd $BUILD
 if [ ! -r $TARFILE ]; then
     curl -LO $URL
 fi
-if [ ! -r $TARFILE.asc ]; then
-    curl -LO $URL.asc
+if [ ! -r $TARFILE.sig ]; then
+    curl -LO $URL.sig
 fi
 
 # Verify and extract.
-test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-# Dan Nicholson <nicholson.db@gmail.com>, GnuPG keyid: 023A4420C7EC6914
-gpgv -v --keyring $KEYRING $TARFILE.asc $TARFILE
+# Niels Möller <nisse@lysator.liu.se>, GnuPG keyid: F3599FF828C67298
+gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
 tar xzf $TARFILE
 
 # Configure.
 cd $VERNAME
 ./configure \
-    LIBS="-framework CoreFoundation -framework Cocoa" \
     --prefix=/usr/local \
-    --disable-debug \
-    --disable-host-tool \
-    --with-internal-glib \
-    --with-pc-path=/usr/local/lib/pkgconfig:/usr/local/share/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig
+    --disable-dependency-tracking \
+    --disable-silent-rules \
+    --disable-static \
+    --enable-cxx \
+    --with-pic
 
 # Compile and stage.
 make clean

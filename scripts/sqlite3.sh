@@ -4,45 +4,46 @@ set -ex
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=sqlite3
 IDENTIFIER="org.sqlite.pkg.sqlite3"
-VERSION=3.13.0
-VERNAME=sqlite-autoconf-3130000
-CHKSUM=e2797026b3310c9d08bd472f6d430058c6dd139ff9d4e30289884ccd9744086b
+VERSION=3.36.0
+VERNAME=sqlite-autoconf-3360000
+CHKSUM=bd90c3eb96bee996206b83be7065c9ce19aef38c3f4fb53073ada0d0b69bbce3
 TARFILE=$VERNAME.tar.gz
-URL=https://sqlite.org/2016/$TARFILE
+URL=https://sqlite.org/2021/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$NAME-$VERSION.pkg
 
+# Download.
 mkdir -p $BUILD
-
 cd $BUILD
 if [ ! -r $TARFILE ]; then
-    curl -O $URL
+    curl -LO $URL
 fi
 
 # Extract
-if [ ! -d $VERNAME ]; then
-    echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-    tar xzf $TARFILE
-fi
+rm -fr $VERNAME
+echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
+tar xzf $TARFILE
 
 # Configure.
 cd $VERNAME
-if [ ! -r Makefile ]; then
-    CPPFLAGS="-DSQLITE_MAX_VARIABLE_NUMBER=250000 -DSQLITE_ENABLE_RTREE=1 -DSQLITE_ENABLE_JSON1=1" \
-            ./configure \
-            --prefix=/usr/local \
-            --disable-dependency-tracking \
-            --enable-dynamic-extensions
-fi
+CPPFLAGS="-DSQLITE_ENABLE_COLUMN_METADATA=1 -DSQLITE_DISABLE_DIRSYNC=1 -DSQLITE_SECURE_DELETE=1 -fno-strict-aliasing" \
+        ./configure \
+        --prefix=/usr/local \
+        --disable-dependency-tracking \
+        --disable-static \
+        --enable-dynamic-extensions \
+        --enable-threadsafe
+
+# Compile and stage.
+make clean
+make
+rm -fr $STAGING
+make install DESTDIR=$STAGING
 
 # Package.
-if [ ! -r $PKG ]; then
-    make clean
-    make
-    rm -fr $STAGING
-    make install DESTDIR=$STAGING
-    pkgbuild --root $STAGING --identifier "${IDENTIFIER}" --version $VERSION $PKG
-fi
+rm -f $PKG $INSTALL/pkg/$NAME.pkg
+pkgbuild --root $STAGING --identifier "${IDENTIFIER}" --version $VERSION $PKG
+ln -s $PKG $INSTALL/pkg/$NAME.pkg

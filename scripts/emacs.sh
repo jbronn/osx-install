@@ -1,52 +1,52 @@
 #!/bin/bash
-set -ex
+set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=emacs
-VERSION=25.1
+VERSION=27.2
 VERNAME=$NAME-$VERSION
-CHKSUM=763344b90db4d40e9fe90c5d14748a9dbd201ce544e2cf0835ab48a0aa4a1c67
+CHKSUM=80ff6118fb730a6d8c704dccd6915a6c0e0a166ab1daeef9fe68afa9073ddb73
 TARFILE=$VERNAME.tar.gz
 URL=https://ftp.gnu.org/gnu/emacs/$TARFILE
 
-# Nicolas Petton <nicolas@petton.fr>
-KEYID=233587A47C207910
-
 # Preparations.
 BUILD=$INSTALL/build/$NAME
+KEYRING=$INSTALL/keyring/$NAME.gpg
 PKGDIR=$INSTALL/pkg/$NAME/$VERSION
+
+# Check prereqs.
+test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
+test -r /usr/local/lib/libjansson.dylib || (echo "libjansson required to be installed" && exit 1)
+test -r /usr/local/lib/libgnutls.dylib || (echo "gnutls required to be installed" && exit 1)
 
 # Download.
 mkdir -p $BUILD $PKGDIR
 cd $BUILD
 if [ ! -r $TARFILE ]; then
-    curl -O $URL
+    curl -LO $URL
 fi
-
 if [ ! -r $TARFILE.sig ]; then
-    curl -O $URL.sig
+    curl -LO $URL.sig
 fi
 
 # Verify and extract.
 test -x /usr/local/bin/gpg || (echo "GnuPG required for verification" && exit 1)
+rm -fr $VERNAME
+echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
+# Eli Zaretskii (eliz) <eliz@gnu.org>, GnuPG keyid: 91C1262F01EB8D39
+gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
+tar xzf $TARFILE
 
-if [ ! -d $VERNAME ]; then
-    gpg --list-keys $KEYID || gpg --keyserver keys.gnupg.net --recv-keys $KEYID
-    gpg --verify $TARFILE.sig || (echo "Can't verify tarball." && exit 1)
-
-    echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-    tar xzf $TARFILE
-fi
-
-# Configure.
+# Configure; `--with-ns` is magic flag that makes this an bundle.
 cd $VERNAME
-if [ ! -r Makefile ]; then
-    ./configure --prefix=/usr/local --with-xml2 --with-ns
-fi
+./configure \
+    --prefix=/usr/local \
+    --with-ns \
+    --with-xml2
 
-# Move application bundle (this isn't an installable that requires root).
-if [ ! -d $PKGDIR/Emacs.app ]; then
-    make install
-    cp -v $BUILD/site-lisp/*.el nextstep/Emacs.app/Contents/Resources/site-lisp
-    mv -v nextstep/Emacs.app $PKGDIR
-fi 
+# Package.
+rm -fr $PKGDIR/Emacs.app $INSTALL/pkg/Emacs.app
+make install
+cp -v $BUILD/site-lisp/*.el nextstep/Emacs.app/Contents/Resources/site-lisp
+# Move application bundle (this isn't a `.pkg` that requires root).
+mv -v nextstep/Emacs.app $PKGDIR
