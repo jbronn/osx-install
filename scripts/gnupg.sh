@@ -12,29 +12,37 @@ URL=https://gnupg.org/ftp/gcrypt/gnupg/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
+KEYRING=$INSTALL/keyring/$NAME.gpg
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 
+# Download.
 mkdir -p $BUILD
-
 cd $BUILD
 if [ ! -r $TARFILE ]; then
-    curl -O $URL
+    curl -LO $URL
+fi
+if [ ! -r $TARFILE.sig ]; then
+    curl -LO $URL.sig
 fi
 
-# Verify checksum and extract.
+# Verify and extract.
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
+# Verify signature if gpgv is available.
+if [ -x /usr/local/bin/gpgv ]; then
+    # Werner Koch (dist sig), GnuPG keyid: 249B39D24F25E3B6
+    gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
+fi
 tar xjf $TARFILE
 
 # Configure.
 cd $VERNAME
 ./configure \
-    CFLAGS=-I/usr/local/include \
-    --disable-dependency-tracking \
-    --disable-silent-rules \
+    --prefix=/usr/local \
     --disable-asm \
-    --prefix=/usr/local
+    --disable-dependency-tracking \
+    --disable-silent-rules
 
 # Compile and stage.
 make clean
