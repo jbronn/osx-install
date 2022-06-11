@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=nettle
 IDENTIFIER="org.gnu.pkg.${NAME}"
-VERSION=3.7.3
+VERSION=3.8
 VERNAME=$NAME-$VERSION
-CHKSUM=661f5eb03f048a3b924c3a8ad2515d4068e40f67e774e8a26827658007e3bcf0
+CHKSUM=7576c68481c198f644b08c160d1a4850ba9449e308069455b5213319f234e8e6
 TARFILE=$VERNAME.tar.gz
 URL=https://ftp.gnu.org/gnu/nettle/$TARFILE
 

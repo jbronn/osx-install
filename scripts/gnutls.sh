@@ -5,10 +5,11 @@ INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=gnutls
 IDENTIFIER="org.gnu.pkg.${NAME}"
 VERSION=3.6.16
-VERNAME=$NAME-$VERSION
+VERMAJ=$(echo "${VERSION}" | awk -F. '{ print $1 "." $2 }')
+VERNAME=${NAME}-${VERSION}
 CHKSUM=1b79b381ac283d8b054368b335c408fedcb9b7144e0c07f531e3537d4328f3b3
-TARFILE=$VERNAME.tar
-URL=https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/$TARFILE
+TARFILE=${VERNAME}.tar
+URL=https://www.gnupg.org/ftp/gcrypt/gnutls/v${VERMAJ}/${TARFILE}
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
@@ -19,6 +20,8 @@ PKG=$INSTALL/pkg/$VERNAME.pkg
 # Check prereqs.
 test -x /usr/local/bin/gpgv || \
     (echo "GnuPG required for download verification" && exit 1)
+test -x /usr/local/bin/xz || \
+    (echo "xz required for extracting tarball" && exit 1)
 test -r /usr/local/lib/libnettle.dylib || \
     (echo "nettle package is required" && exit 1)
 test -r /usr/local/lib/libgettextlib.dylib || \

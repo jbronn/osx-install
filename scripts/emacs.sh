@@ -3,10 +3,10 @@ set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=emacs
-VERSION=27.2
+VERSION=28.1
 VERNAME=$NAME-$VERSION
-CHKSUM=80ff6118fb730a6d8c704dccd6915a6c0e0a166ab1daeef9fe68afa9073ddb73
-TARFILE=$VERNAME.tar.gz
+CHKSUM=28b1b3d099037a088f0a4ca251d7e7262eab5ea1677aabffa6c4426961ad75e1
+TARFILE=$VERNAME.tar.xz
 URL=https://ftp.gnu.org/gnu/emacs/$TARFILE
 
 # Preparations.
@@ -33,9 +33,9 @@ fi
 test -x /usr/local/bin/gpg || (echo "GnuPG required for verification" && exit 1)
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-# Eli Zaretskii (eliz) <eliz@gnu.org>, GnuPG keyid: 91C1262F01EB8D39
+# Eli Zaretskii (eliz) <eliz@gnu.org>, GnuPG keyids: 91C1262F01EB8D39, E78DAE0F3115E06B
 gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
-tar xzf $TARFILE
+tar xJf $TARFILE
 
 # Configure; `--with-ns` is magic flag that makes this an bundle.
 cd $VERNAME

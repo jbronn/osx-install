@@ -8,7 +8,7 @@ VERSION=2.13.1
 VERNAME=$NAME-$VERSION
 CHKSUM=f4f377da17b10201a60c1108613e78ee15df6b12016b116b6de42209f47a474f
 TARFILE=$VERNAME.tar.gz
-URL=https://digip.org/jansson/releases//$TARFILE
+URL=https://digip.org/jansson/releases/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
