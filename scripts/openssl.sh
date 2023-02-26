@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=openssl
 IDENTIFIER="org.openssl.pkg.${NAME}"
-VERSION=1.1.1k
+VERSION=1.1.1t
 VERNAME=$NAME-$VERSION
-CHKSUM=892a0875b9872acd04a9fde79b1f943075d5ea162415de3047c327df33fbaee5
+CHKSUM=8dee9b24bdb1dcbf0c3d1e9b02fb8f6bf22165e807f45adeb7c9677536859d3b
 TARFILE=$VERNAME.tar.gz
 URL=https://www.openssl.org/source/$TARFILE
 
@@ -30,7 +30,7 @@ fi
 test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-# Matt Caswell <matt@openssl.org>, GnuPG keyid: D9C4D26D0E604491
+# Richard Levitte <richard@levitte.org>, GnuPG keyid: D5E9E43F7DF9EE8C
 gpgv -v --keyring $KEYRING $TARFILE.asc $TARFILE
 tar xzf $TARFILE
 
