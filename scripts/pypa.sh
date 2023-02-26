@@ -4,15 +4,15 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=pypa
 IDENTIFIER="org.python.pkg.pypa"
-VERSION=21.7.0
+VERSION=23.2.0
 VERNAME=$NAME-$VERSION
 PYPI_URL=https://pypi.org/pypi
 
 # Preparations.
-SETUPTOOLS_VERSION=57.1.0
-PIP_VERSION=21.1.3
-PY3_VERSION=3.9
-WHEEL_VERSION=0.36.2
+SETUPTOOLS_VERSION=67.4.0
+PIP_VERSION=23.0.1
+PY3_VERSION=3.11
+WHEEL_VERSION=0.38.4
 
 BUILD=$INSTALL/build/$NAME
 KEYRING=$INSTALL/keyring/$NAME.gpg
@@ -22,8 +22,7 @@ PKG=$INSTALL/pkg/$VERNAME.pkg
 # Wheel files.
 SETUPTOOLS_WHEEL=setuptools-$SETUPTOOLS_VERSION-py3-none-any.whl
 PIP_WHEEL=pip-$PIP_VERSION-py3-none-any.whl
-WHEEL_WHEEL=wheel-$WHEEL_VERSION-py2.py3-none-any.whl
-
+WHEEL_WHEEL=wheel-$WHEEL_VERSION-py3-none-any.whl
 
 # Download.
 cd $BUILD
@@ -52,20 +51,6 @@ mkdir -p $PY3_BIN $PY3_LIB
 unzip $SETUPTOOLS_WHEEL -d $PY3_LIB
 unzip $PIP_WHEEL -d $PY3_LIB
 unzip $WHEEL_WHEEL -d $PY3_LIB
-
-cat <<EOF > $PY3_BIN/easy_install-$PY3_VERSION
-#!/usr/local/bin/python${PY3_VERSION}
-__requires__ = 'setuptools==${SETUPTOOLS_VERSION}'
-import sys
-from pkg_resources import load_entry_point
-
-if __name__ == '__main__':
-    sys.exit(
-        load_entry_point('setuptools==${SETUPTOOLS_VERSION}', 'console_scripts', 'easy_install')()
-    )
-EOF
-chmod +x $PY3_BIN/easy_install-$PY3_VERSION
-ln -s /Library/Frameworks/Python.framework/Versions/$PY3_VERSION/bin/easy_install-$PY3_VERSION  $STAGING/usr/local/bin/easy_install-$PY3_VERSION
 
 cat <<EOF > $PY3_BIN/pip3
 #!/usr/local/bin/python${PY3_VERSION}
