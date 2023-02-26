@@ -4,11 +4,11 @@ set -ex
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=sqlite3
 IDENTIFIER="org.sqlite.pkg.sqlite3"
-VERSION=3.36.0
-VERNAME=sqlite-autoconf-3360000
-CHKSUM=bd90c3eb96bee996206b83be7065c9ce19aef38c3f4fb53073ada0d0b69bbce3
+VERSION=3.41.0
+VERNAME="sqlite-autoconf-$(echo "${VERSION}" | tr -d .)000"
+CHKSUM=49f77ac53fd9aa5d7395f2499cb816410e5621984a121b858ccca05310b05c70
 TARFILE=$VERNAME.tar.gz
-URL=https://sqlite.org/2021/$TARFILE
+URL=https://sqlite.org/2023/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
