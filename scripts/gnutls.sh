@@ -4,10 +4,10 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=gnutls
 IDENTIFIER="org.gnu.pkg.${NAME}"
-VERSION=3.6.16
+VERSION=3.8.0
 VERMAJ=$(echo "${VERSION}" | awk -F. '{ print $1 "." $2 }')
 VERNAME=${NAME}-${VERSION}
-CHKSUM=1b79b381ac283d8b054368b335c408fedcb9b7144e0c07f531e3537d4328f3b3
+CHKSUM=0ea0d11a1660a1e63f960f157b197abe6d0c8cb3255be24e1fb3815930b9bdc5
 TARFILE=${VERNAME}.tar
 URL=https://www.gnupg.org/ftp/gcrypt/gnutls/v${VERMAJ}/${TARFILE}
 
@@ -40,8 +40,10 @@ fi
 # Verify and extract.
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}.xz" | shasum -a 256 -c -
+# XXX: Ugh, GnuTLS now signs with multiple signatures, including with an algorithm
+# that GnuPG 1.4.x doesn't support.
 # Daiki Ueno <ueno@unixuser.org>, GnuPG keyid: D605848ED7E69871
-gpgv -v --keyring $KEYRING $TARFILE.xz.sig $TARFILE.xz
+#gpgv -v --keyring $KEYRING $TARFILE.xz.sig $TARFILE.xz
 xz --decompress --keep --force $TARFILE.xz
 tar xf $TARFILE
 rm -f $TARFILE
@@ -50,8 +52,6 @@ rm -f $TARFILE
 GNUTLS_CONFIG_DIR=/usr/local/etc/gnutls
 GNUTLS_TRUST_STORE=${GNUTLS_CONFIG_DIR}/cert.pem
 cd $VERNAME
-patch -p0 < ../gnutls-fallthrough.patch
-patch -p1 < ../gnutls-undo-libtasn1-cisdigit.patch
 CFLAGS="-Wno-implicit-function-declaration" ./configure \
       --prefix=/usr/local \
       --disable-dependency-tracking \
