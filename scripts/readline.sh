@@ -4,21 +4,15 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=readline
 IDENTIFIER="org.gnu.pkg.${NAME}"
-VERSION=8.1.2
+VERSION=8.2
 VERNAME=$NAME-$VERSION
-CHKSUM=7589a2381a8419e68654a47623ce7dfcb756815c8fee726b98f90bf668af7bc6
+CHKSUM=3feb7171f16a84ee82ca18a36d7b9be109a52c04f492a053331d7d1095007c35
 TARFILE=$VERNAME.tar.gz
 URL=https://ftp.gnu.org/gnu/readline/$TARFILE
 
 COMPACTVERSION=$(echo $VERSION | tr -d .)
 PATCHURL=https://ftp.gnu.org/gnu/readline/$VERNAME-patches
-PATCHVERSION=0
-
-# GnuTLS started providing patched version tarballs with 8.1.2, let's
-# see if this continues.
-#CHKSUM=f8ceb4ee131e3232226a17f51b164afc46cd0b9e6cef344be87c65962cb82b02
-#VERSION=8.1
-#PATCHVERSION=2
+PATCHVERSION=1
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
