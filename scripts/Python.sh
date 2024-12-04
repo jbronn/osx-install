@@ -4,11 +4,11 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=Python
 IDENTIFIER="org.python.pkg.python3"
-VERSION=3.11.2
+VERSION=3.13.1
 VERMAJ="${VERSION:0:3}"
 VEREXTRA=""
 VERNAME=${NAME}-${VERSION}${VEREXTRA}
-CHKSUM=29e4b8f5f1658542a8c13e2dd277358c9c48f2b2f7318652ef1675e402b9d2af
+CHKSUM=9cf9427bee9e2242e3877dd0f6b641c1853ca461f39d6503ce260a59c80bf0d9
 TARFILE=$VERNAME.tar.xz
 URL=https://www.python.org/ftp/python/$VERSION/$TARFILE
 
@@ -25,6 +25,8 @@ test -r /usr/local/lib/libreadline.dylib || \
     (echo "readline package is required" && exit 1)
 test -r /usr/local/lib/libssl.dylib || \
     (echo "openssl package is required" && exit 1)
+test -r /usr/local/lib/libsqlite3.dylib || \
+    (echo "sqlite3 package is required" && exit 1)
 
 # Download.
 mkdir -p $BUILD
@@ -40,6 +42,7 @@ fi
 rm -fr $VERNAME
 # Łukasz Langa (GPG langa.pl) <lukasz@langa.pl>, GnuPG keyid: B26995E310250568
 # Pablo Galindo Salgado <pablogsal@gmail.com>, GnuPG keyid: 64E628F8D684696D
+# Thomas Wouters <thomas@python.org>, GnuPG keyid: A821E680E5FA6305
 gpgv -v --keyring $KEYRING $TARFILE.asc $TARFILE
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
 tar xJf $TARFILE
@@ -51,6 +54,12 @@ cd $VERNAME
     --prefix=/usr/local \
     --enable-ipv6 \
     --enable-framework \
+    --enable-loadable-sqlite-extensions \
+    --enable-optimizations \
+    --with-dbmliborder=ndbm \
+    --with-dtrace \
+    --with-system-expat \
+    --with-system-libmpdec \
     --without-ensurepip
 
 # Compile
@@ -58,33 +67,58 @@ make clean
 make
 
 # TODO: Investigate these test failures:
-## test_distutils.py
+## test_external_inspection.py
+#
 # ======================================================================
-# FAIL: test_deployment_target_default (distutils.tests.test_build_ext.ParallelBuildExtTestCase.test_deployment_target_default)
+# ERROR: test_self_trace (test.test_external_inspection.TestGetStackTrace.test_self_trace)
 # ----------------------------------------------------------------------
 # Traceback (most recent call last):
-#   File "/Users/username/osx-install/build/Python/Python-3.11.2/Lib/distutils/unixccompiler.py", line 117, in _compile
-#     self.spawn(compiler_so + cc_args + [src, '-o', obj] +
-#   File "/Users/username/osx-install/build/Python/Python-3.11.2/Lib/distutils/ccompiler.py", line 910, in spawn
-#     spawn(cmd, dry_run=self.dry_run)
-#   File "/Users/username/osx-install/build/Python/Python-3.11.2/Lib/distutils/spawn.py", line 91, in spawn
-#     raise DistutilsExecError(
-# distutils.errors.DistutilsExecError: command '/usr/bin/gcc' failed with exit code 1
+#   File "/Users/jbronn/osx-install/build/Python/Python-3.13.1/Lib/test/test_external_inspection.py", line 80, in test_self_trace
+#     stack_trace = get_stack_trace(os.getpid())
+# RuntimeError: Failed to get .PyRuntime address
 #
 ## test_popen.py
+#
 # ======================================================================
 # ERROR: test_popen (test.test_popen.PopenTest.test_popen)
 # ----------------------------------------------------------------------
 # Traceback (most recent call last):
-#   File "/Users/username/osx-install/build/Python/Python-3.11.2/Lib/test/test_popen.py", line 35, in test_popen
+#   File "/Users/jbronn/osx-install/build/Python/Python-3.13.1/Lib/test/test_popen.py", line 35, in test_popen
 #     self._do_test_commandline(
-#   File "/Users/username/osx-install/build/Python/Python-3.11.2/Lib/test/test_popen.py", line 30, in _do_test_commandline
+#     ~~~~~~~~~~~~~~~~~~~~~~~~~^
+#         "foo bar",
+#         ^^^^^^^^^^
+#         ["foo", "bar"]
+#         ^^^^^^^^^^^^^^
+#     )
+#     ^
+#   File "/Users/jbronn/osx-install/build/Python/Python-3.13.1/Lib/test/test_popen.py", line 30, in _do_test_commandline
 #     got = eval(data)[1:] # strip off argv[0]
-#           ^^^^^^^^^^
+#           ~~~~^^^^^^
 #   File "<string>", line 0
+#
 # SyntaxError: invalid syntax
 #
+## test_signal.py
+#
+# ======================================================================
+# FAIL: test_itimer_virtual (test.test_signal.ItimerTest.test_itimer_virtual)
+# ----------------------------------------------------------------------
+# Traceback (most recent call last):
+#   File "/Users/jbronn/osx-install/build/Python/Python-3.13.1/Lib/test/test_signal.py", line 845, in test_itimer_virtual
+#     for _ in support.busy_retry(support.LONG_TIMEOUT):
+#              ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+#   File "/Users/jbronn/osx-install/build/Python/Python-3.13.1/Lib/test/support/__init__.py", line 2490, in busy_retry
+#     raise AssertionError(msg)
+# AssertionError: timeout (300.0 seconds)
+#
+## test_ssl.py
+#
+# Issues with OpenSSL 3.4.0: https://github.com/python/cpython/issues/127026
+#
+#
 ## test_venv.py
+#
 # ======================================================================
 # ERROR: test_zippath_from_non_installed_posix (test.test_venv.BasicTest.test_zippath_from_non_installed_posix)
 # Test that when create venv from non-installed python, the zip path
@@ -97,9 +131,11 @@ make
 # subprocess.CalledProcessError: Command '['/private/var/folders/ws/cjz0nqld52n7dkmzgts6ylyr0000gp/T/tmp6msltfxd/bin/python.exe', '-m', 'venv', '--without-pip', '/private/var/folders/ws/cjz0nqld52n7dkmzgts6ylyr0000gp/T/tmpesii6n04']' died with <Signals.SIGABRT: 6>.
 #
 rm -f \
-   Lib/test/test_distutils.py \
-   Lib/test/test_popen.py \
-   Lib/test/test_venv.py
+    Lib/test/test_external_inspection.py \
+    Lib/test/test_popen.py \
+    Lib/test/test_signal.py \
+    Lib/test/test_ssl.py \
+    Lib/test/test_venv.py
 
 # Test
 make quicktest

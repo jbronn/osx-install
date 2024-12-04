@@ -4,15 +4,15 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=pypa
 IDENTIFIER="org.python.pkg.pypa"
-VERSION=23.2.0
+VERSION=24.12.0
 VERNAME=$NAME-$VERSION
 PYPI_URL=https://pypi.org/pypi
 
 # Preparations.
-SETUPTOOLS_VERSION=67.4.0
-PIP_VERSION=23.0.1
-PY3_VERSION=3.11
-WHEEL_VERSION=0.38.4
+SETUPTOOLS_VERSION=75.6.0
+PIP_VERSION=24.3.1
+PY3_VERSION=3.13
+WHEEL_VERSION=0.45.1
 
 BUILD=$INSTALL/build/$NAME
 KEYRING=$INSTALL/keyring/$NAME.gpg
@@ -51,19 +51,5 @@ mkdir -p $PY3_BIN $PY3_LIB
 unzip $SETUPTOOLS_WHEEL -d $PY3_LIB
 unzip $PIP_WHEEL -d $PY3_LIB
 unzip $WHEEL_WHEEL -d $PY3_LIB
-
-cat <<EOF > $PY3_BIN/pip3
-#!/usr/local/bin/python${PY3_VERSION}
-__requires__ = 'pip==${PIP_VERSION}'
-import sys
-from pkg_resources import load_entry_point
-
-if __name__ == '__main__':
-    sys.exit(
-        load_entry_point('pip==${PIP_VERSION}', 'console_scripts', 'pip3')()
-    )
-EOF
-chmod +x $PY3_BIN/pip3
-ln -s /Library/Frameworks/Python.framework/Versions/$PY3_VERSION/bin/pip3 $STAGING/usr/local/bin/pip3
 
 pkgbuild --root $STAGING --identifier "${IDENTIFIER}" --version $VERSION $PKG

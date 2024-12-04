@@ -37,12 +37,12 @@ Emacs is built as a normal macOS app:
 # Drag pkg/emacs/29.4/Emacs.app /Applications
 ```
 
-OpenSSL is required for Python and PostgreSQL:
+Python requires SQLite3 and OpenSSL; OpenSSL is also required for PostgreSQL:
 
 ```
 ./scripts/openssl.sh && sudo installer -pkg pkg/openssl.pkg -target /
+./scripts/sqlite.sh && sudo installer -pkg pkg/sqlite.pkg -target /
 ```
-
 
 ## Why not alternatives?
 
