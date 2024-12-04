@@ -4,11 +4,11 @@ set -ex
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=xz
 IDENTIFIER="org.tukaani.pkg.xz"
-VERSION=5.4.1
+VERSION=5.6.3
 VERNAME=$NAME-$VERSION
-CHKSUM=e4b0f81582efa155ccf27bb88275254a429d44968e488fc94b806f2a61cd3e22
+CHKSUM=b1d45295d3f71f25a4c9101bd7c8d16cb56348bbef3bbc738da0351e17c73317
 TARFILE=$VERNAME.tar.gz
-URL=http://tukaani.org/xz/$TARFILE
+URL=https://tukaani.org/xz/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
@@ -40,7 +40,8 @@ cd $VERNAME
     --prefix=/usr/local \
     --disable-debug \
     --disable-dependency-tracking \
-    --disable-silent-rules
+    --disable-silent-rules \
+    --disable-nls
 
 # Compile and stage.
 make clean

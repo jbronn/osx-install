@@ -37,6 +37,7 @@ tar xzf $TARFILE
 # Configure.
 cd $VERNAME
 ./configure \
+    CFLAGS="-Wno-int-conversion" \
     LIBS="-framework CoreFoundation -framework Cocoa" \
     --prefix=/usr/local \
     --disable-debug \

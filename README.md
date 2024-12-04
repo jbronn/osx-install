@@ -24,7 +24,7 @@ done
 GnuTLS and its prereqs are needed for Emacs:
 
 ```
-for pkg in gmp nettle gettext gnutls jansson; do
+for pkg in gmp nettle gettext gnutls jansson texinfo; do
   ./scripts/${pkg}.sh
   sudo installer -pkg pkg/${pkg}.pkg -target /
 done

@@ -4,10 +4,10 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=gettext
 IDENTIFIER="org.gnu.pkg.${NAME}"
-VERSION=0.21.1
+VERSION=0.22.5
 VERNAME=$NAME-$VERSION
-CHKSUM=e8c3650e1d8cee875c4f355642382c1df83058bd5a11ee8555c0cf276d646d45
-TARFILE=$VERNAME.tar.gz
+CHKSUM=fe10c37353213d78a5b83d48af231e005c4da84db5ce88037d88355938259640
+TARFILE=$VERNAME.tar.xz
 URL=https://ftp.gnu.org/gnu/gettext/$TARFILE
 
 # Preparations.

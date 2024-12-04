@@ -12,7 +12,7 @@ URL=https://ftp.gnu.org/gnu/readline/$TARFILE
 
 COMPACTVERSION=$(echo $VERSION | tr -d .)
 PATCHURL=https://ftp.gnu.org/gnu/readline/$VERNAME-patches
-PATCHVERSION=1
+PATCHVERSION=13
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
