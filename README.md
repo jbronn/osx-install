@@ -34,7 +34,7 @@ Emacs is built as a normal macOS app:
 
 ```
 ./scripts/emacs.sh
-# Drag pkg/emacs/27.2/Emacs.app /Applications
+# Drag pkg/emacs/29.4/Emacs.app /Applications
 ```
 
 OpenSSL is required for Python and PostgreSQL:

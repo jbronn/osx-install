@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=openssl
 IDENTIFIER="org.openssl.pkg.${NAME}"
-VERSION=1.1.1t
+VERSION=1.1.1w
 VERNAME=$NAME-$VERSION
-CHKSUM=8dee9b24bdb1dcbf0c3d1e9b02fb8f6bf22165e807f45adeb7c9677536859d3b
+CHKSUM=cf3098950cb4d853ad95c0841f1f9c6d3dc102dccfcacd521d93925208b76ac8
 TARFILE=$VERNAME.tar.gz
 URL=https://www.openssl.org/source/$TARFILE
 
@@ -44,7 +44,7 @@ perl ./Configure \
   no-ssl3 \
   no-ssl3-method \
   no-zlib \
-  darwin64-x86_64-cc \
+  darwin64-$(uname -w)-cc \
   enable-ec_nistp_64_gcc_128
 
 # Compile and stage.
