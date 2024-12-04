@@ -44,7 +44,7 @@ perl ./Configure \
   no-ssl3 \
   no-ssl3-method \
   no-zlib \
-  darwin64-$(uname -w)-cc \
+  darwin64-$(uname -m)-cc \
   enable-ec_nistp_64_gcc_128
 
 # Compile and stage.
