@@ -2,13 +2,13 @@
 set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
-NAME=libgpg-error
+NAME=libksba
 IDENTIFIER="org.gnupg.pkg.${NAME}"
-VERSION=1.51
+VERSION=1.6.7
 VERNAME=$NAME-$VERSION
-CHKSUM=be0f1b2db6b93eed55369cdf79f19f72750c8c7c39fc20b577e724545427e6b2
+CHKSUM=cf72510b8ebb4eb6693eef765749d83677a03c79291a311040a5bfd79baab763
 TARFILE=$VERNAME.tar.bz2
-URL=https://gnupg.org/ftp/gcrypt/libgpg-error/$TARFILE
+URL=https://gnupg.org/ftp/gcrypt/libksba/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
@@ -36,10 +36,8 @@ tar xjf $TARFILE
 cd $VERNAME
 ./configure \
     --disable-debug \
-    --disable-dependency-tracking \
     --disable-silent-rules \
-    --enable-install-gpg-error-config \
-    --enable-static
+    --prefix=/usr/local
 
 # Compile and stage.
 make clean

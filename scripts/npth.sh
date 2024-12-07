@@ -2,13 +2,13 @@
 set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
-NAME=libgpg-error
+NAME=npth
 IDENTIFIER="org.gnupg.pkg.${NAME}"
-VERSION=1.51
+VERSION=1.8
 VERNAME=$NAME-$VERSION
-CHKSUM=be0f1b2db6b93eed55369cdf79f19f72750c8c7c39fc20b577e724545427e6b2
+CHKSUM=8bd24b4f23a3065d6e5b26e98aba9ce783ea4fd781069c1b35d149694e90ca3e
 TARFILE=$VERNAME.tar.bz2
-URL=https://gnupg.org/ftp/gcrypt/libgpg-error/$TARFILE
+URL=https://gnupg.org/ftp/gcrypt/npth/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
@@ -37,9 +37,7 @@ cd $VERNAME
 ./configure \
     --disable-debug \
     --disable-dependency-tracking \
-    --disable-silent-rules \
-    --enable-install-gpg-error-config \
-    --enable-static
+    --disable-silent-rules
 
 # Compile and stage.
 make clean

@@ -2,13 +2,13 @@
 set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
-NAME=libgpg-error
+NAME=libassuan
 IDENTIFIER="org.gnupg.pkg.${NAME}"
-VERSION=1.51
+VERSION=2.5.7
 VERNAME=$NAME-$VERSION
-CHKSUM=be0f1b2db6b93eed55369cdf79f19f72750c8c7c39fc20b577e724545427e6b2
+CHKSUM=0103081ffc27838a2e50479153ca105e873d3d65d8a9593282e9c94c7e6afb76
 TARFILE=$VERNAME.tar.bz2
-URL=https://gnupg.org/ftp/gcrypt/libgpg-error/$TARFILE
+URL=https://gnupg.org/ftp/gcrypt/libassuan/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
@@ -38,7 +38,6 @@ cd $VERNAME
     --disable-debug \
     --disable-dependency-tracking \
     --disable-silent-rules \
-    --enable-install-gpg-error-config \
     --enable-static
 
 # Compile and stage.

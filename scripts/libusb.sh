@@ -2,13 +2,13 @@
 set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
-NAME=libgpg-error
-IDENTIFIER="org.gnupg.pkg.${NAME}"
-VERSION=1.51
+NAME=libusb
+IDENTIFIER="info.libusb.pkg.${NAME}"
+VERSION=1.0.27
 VERNAME=$NAME-$VERSION
-CHKSUM=be0f1b2db6b93eed55369cdf79f19f72750c8c7c39fc20b577e724545427e6b2
+CHKSUM=ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575
 TARFILE=$VERNAME.tar.bz2
-URL=https://gnupg.org/ftp/gcrypt/libgpg-error/$TARFILE
+URL=https://github.com/libusb/libusb/releases/download/v1.0.27/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
@@ -22,24 +22,25 @@ cd $BUILD
 if [ ! -r $TARFILE ]; then
     curl -LO $URL
 fi
-if [ ! -r $TARFILE.sig ]; then
-    curl -LO $URL.sig
+if [ ! -r $TARFILE.asc ]; then
+    curl -LO $URL.asc
 fi
 
 # Verify and extract.
+test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
+# Tormod Volden <tormod.volden@gmail.com>, GnuPG key id: C68187379B23DE9EFC46651E2C80FF56C6830A0E
+gpgv -v --keyring $KEYRING $TARFILE.asc $TARFILE
+
 # TODO: Verify signature if updated gpgv is available.
 tar xjf $TARFILE
 
 # Configure.
 cd $VERNAME
 ./configure \
-    --disable-debug \
     --disable-dependency-tracking \
-    --disable-silent-rules \
-    --enable-install-gpg-error-config \
-    --enable-static
+    --prefix=/usr/local
 
 # Compile and stage.
 make clean

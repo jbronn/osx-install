@@ -2,13 +2,13 @@
 set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
-NAME=libgpg-error
+NAME=pinentry
 IDENTIFIER="org.gnupg.pkg.${NAME}"
-VERSION=1.51
+VERSION=1.3.1
 VERNAME=$NAME-$VERSION
-CHKSUM=be0f1b2db6b93eed55369cdf79f19f72750c8c7c39fc20b577e724545427e6b2
+CHKSUM=bc72ee27c7239007ab1896c3c2fae53b076e2c9bd2483dc2769a16902bce8c04
 TARFILE=$VERNAME.tar.bz2
-URL=https://gnupg.org/ftp/gcrypt/libgpg-error/$TARFILE
+URL=https://gnupg.org/ftp/gcrypt/pinentry/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
@@ -38,8 +38,13 @@ cd $VERNAME
     --disable-debug \
     --disable-dependency-tracking \
     --disable-silent-rules \
-    --enable-install-gpg-error-config \
-    --enable-static
+    --disable-pinentry-fltk \
+    --disable-pinentry-gnome3 \
+    --disable-pinentry-gtk2 \
+    --disable-pinentry-qt \
+    --disable-pinentry-qt5 \
+    --disable-pinentry-tqt \
+    --enable-pinentry-tty
 
 # Compile and stage.
 make clean
