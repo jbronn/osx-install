@@ -52,6 +52,7 @@ In short, I don't like them all.  MacPorts and Fink (yes I'm old, you hipsters) 
 * The symlinking of binaries to versioned directories in `Cellar`.  This great idea has been used by such other package luminaries like SCO Unix.
 * Questionable patches as part of the build recipes.
 * Nothing is GPG-signed or verified.
+* Test suites aren't run.
 * It's undependable, especially when upgrading versions.
 * I got burned in the early days of GeoDjango by the author's aggressive use of compilation optimization flags, which caused me and my users countless hours of angst.
 

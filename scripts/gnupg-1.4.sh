@@ -2,13 +2,13 @@
 set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
-NAME=gmp
-IDENTIFIER="org.gnu.pkg.${NAME}"
-VERSION=6.3.0
+NAME=gnupg
+IDENTIFIER="org.gnupg.pkg.${NAME}"
+VERSION=1.4.23
 VERNAME=$NAME-$VERSION
-CHKSUM=a3c2b80201b89e68616f4ad30bc66aee4927c3ce50e33929ca819d5c43538898
-TARFILE=$VERNAME.tar.xz
-URL=https://gmplib.org/download/gmp/$TARFILE
+CHKSUM=c9462f17e651b6507848c08c430c791287cd75491f8b5a8b50c6ed46b12678ba
+TARFILE=$VERNAME.tar.bz2
+URL=https://gnupg.org/ftp/gcrypt/gnupg/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
@@ -31,20 +31,18 @@ rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
 # Verify signature if gpgv is available.
 if [ -x /usr/local/bin/gpgv ]; then
-    # Niels Möller <nisse@lysator.liu.se>, GnuPG keyid: F3599FF828C67298
+    # Werner Koch (dist sig), GnuPG keyid: 249B39D24F25E3B6
     gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
 fi
-tar xJf $TARFILE
+tar xjf $TARFILE
 
 # Configure.
 cd $VERNAME
 ./configure \
     --prefix=/usr/local \
+    --disable-asm \
     --disable-dependency-tracking \
-    --disable-silent-rules \
-    --disable-static \
-    --enable-cxx \
-    --with-pic
+    --disable-silent-rules
 
 # Compile and stage.
 make clean

@@ -27,13 +27,13 @@ if [ ! -r $TARFILE.asc ]; then
 fi
 
 # Verify and extract.
-test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-# Tormod Volden <tormod.volden@gmail.com>, GnuPG key id: C68187379B23DE9EFC46651E2C80FF56C6830A0E
-gpgv -v --keyring $KEYRING $TARFILE.asc $TARFILE
-
-# TODO: Verify signature if updated gpgv is available.
+# Verify signature if gpgv is available.
+if [ -x /usr/local/bin/gpgv ]; then
+    # Tormod Volden <tormod.volden@gmail.com>, GnuPG key id: C68187379B23DE9EFC46651E2C80FF56C6830A0E
+    gpgv -v --keyring $KEYRING $TARFILE.asc $TARFILE
+fi
 tar xjf $TARFILE
 
 # Configure.

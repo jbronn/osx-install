@@ -27,11 +27,13 @@ if [ ! -r $TARFILE.sig ]; then
 fi
 
 # Verify and extract.
-test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-# Lasse Collin <lasse.collin@tukaani.org>, GnuPG keyid 38EE757D69184620.
-gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
+# Verify signature if gpgv is available.
+if [ -x /usr/local/bin/gpgv ]; then
+    # Lasse Collin <lasse.collin@tukaani.org>, GnuPG keyid 38EE757D69184620.
+    gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
+fi
 tar xzf $TARFILE
 
 # Configure.

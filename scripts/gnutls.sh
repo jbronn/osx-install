@@ -18,8 +18,6 @@ STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 
 # Check prereqs.
-test -x /usr/local/bin/gpgv || \
-    (echo "GnuPG required for download verification" && exit 1)
 test -x /usr/local/bin/xz || \
     (echo "xz required for extracting tarball" && exit 1)
 test -r /usr/local/lib/libnettle.dylib || \
@@ -40,10 +38,12 @@ fi
 # Verify and extract.
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}.xz" | shasum -a 256 -c -
-# XXX: Ugh, GnuTLS now signs with multiple signatures, including with an algorithm
-# that GnuPG 1.4.x doesn't support.
-# Daiki Ueno <ueno@unixuser.org>, GnuPG keyid: D605848ED7E69871
-#gpgv -v --keyring $KEYRING $TARFILE.xz.sig $TARFILE.xz
+# GnuPG 2 required to verify.
+if [ -x /usr/local/bin/gpgv ] && gpgv --version | head -n1 | awk '{ print $3 }' | grep -q ^2\.; then
+    # Daiki Ueno <ueno@unixuser.org>, GnuPG keyid: 462225C3B46F34879FC8496CD605848ED7E69871
+    # Zoltan Fridrich <zfridric@redhat.com>, GnuPG keyid: 5D46CB0F763405A7053556F47A75A648B3F9220C
+    gpgv -v --keyring $KEYRING $TARFILE.xz.sig $TARFILE.xz
+fi
 xz --decompress --keep --force $TARFILE.xz
 tar xf $TARFILE
 rm -f $TARFILE

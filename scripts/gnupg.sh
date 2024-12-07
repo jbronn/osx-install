@@ -3,10 +3,10 @@ set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=gnupg
-IDENTIFIER="org.gnu.pkg.${NAME}"
-VERSION=1.4.23
+IDENTIFIER="org.gnupg.pkg.${NAME}"
+VERSION=2.4.7
 VERNAME=$NAME-$VERSION
-CHKSUM=c9462f17e651b6507848c08c430c791287cd75491f8b5a8b50c6ed46b12678ba
+CHKSUM=7b24706e4da7e0e3b06ca068231027401f238102c41c909631349dcc3b85eb46
 TARFILE=$VERNAME.tar.bz2
 URL=https://gnupg.org/ftp/gcrypt/gnupg/$TARFILE
 
@@ -15,6 +15,18 @@ BUILD=$INSTALL/build/$NAME
 KEYRING=$INSTALL/keyring/$NAME.gpg
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
+
+# Check prereqs.
+test -r /usr/local/lib/libgettextlib.dylib || (echo "gettext required to be installed" && exit 1)
+test -r /usr/local/lib/libassuan.dylib || (echo "libassuan required to be installed" && exit 1)
+test -r /usr/local/lib/libgcrypt.dylib || (echo "libgcrypt required to be installed" && exit 1)
+test -r /usr/local/lib/libgpg-error.dylib || (echo "libgpg-error required to be installed" && exit 1)
+test -r /usr/local/lib/libgnutls.dylib || (echo "gnutls required to be installed" && exit 1)
+test -r /usr/local/lib/libksba.dylib || (echo "libksba required to be installed" && exit 1)
+test -r /usr/local/lib/libreadline.dylib || (echo "readline package is required" && exit 1)
+test -r /usr/local/lib/libusb-1.0.dylib || (echo "libusb required to be installed" && exit 1)
+test -x /usr/local/bin/pinentry || (echo "pinentry required to be installed" && exit 1)
+test -r /usr/local/lib/libnpth.dylib || (echo "npth required to be installed" && exit 1)
 
 # Download.
 mkdir -p $BUILD
@@ -29,9 +41,10 @@ fi
 # Verify and extract.
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-# Verify signature if gpgv is available.
-if [ -x /usr/local/bin/gpgv ]; then
-    # Werner Koch (dist sig), GnuPG keyid: 249B39D24F25E3B6
+# GnuPG 2 required to verify.
+if [ -x /usr/local/bin/gpgv ] && gpgv --version | head -n1 | awk '{ print $3 }' | grep -q ^2\.; then
+    # Werner Koch (dist signing 2020), GnuPG keyid: 6DAA6E64A76D2840571B4902528897B826403AD
+    # Niibe Yutaka (GnuPG Release Key), GnuPG keyid: AC8E115BF73E2D8D47FA9908E98E9B2D19C6C8BD
     gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
 fi
 tar xjf $TARFILE
@@ -39,10 +52,11 @@ tar xjf $TARFILE
 # Configure.
 cd $VERNAME
 ./configure \
-    --prefix=/usr/local \
-    --disable-asm \
+    --disable-debug \
     --disable-dependency-tracking \
-    --disable-silent-rules
+    --disable-silent-rules \
+    --enable-all-tests \
+    --with-pinentry-pgm=/usr/local/bin/pinentry
 
 # Compile and stage.
 make clean

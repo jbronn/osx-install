@@ -12,9 +12,12 @@ URL=https://gnupg.org/ftp/gcrypt/libksba/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
-KEYRING=$INSTALL/keyring/$NAME.gpg
+KEYRING=$INSTALL/keyring/gnupg.gpg
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
+
+# Check prereqs.
+test -r /usr/local/lib/libgpg-error.dylib || (echo "libgpg-error required to be installed" && exit 1)
 
 # Download.
 mkdir -p $BUILD
@@ -29,7 +32,12 @@ fi
 # Verify and extract.
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-# TODO: Verify signature if updated gpgv is available.
+# GnuPG 2 required to verify.
+if [ -x /usr/local/bin/gpgv ] && gpgv --version | head -n1 | awk '{ print $3 }' | grep -q ^2\.; then
+    # Werner Koch (dist signing 2020), GnuPG keyid: 6DAA6E64A76D2840571B4902528897B826403AD
+    # Niibe Yutaka (GnuPG Release Key), GnuPG keyid: AC8E115BF73E2D8D47FA9908E98E9B2D19C6C8BD
+    gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
+fi
 tar xjf $TARFILE
 
 # Configure.

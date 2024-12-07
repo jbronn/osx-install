@@ -17,7 +17,6 @@ STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 
 # Check prereqs.
-test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
 test -r /usr/local/lib/libgmp.dylib || (echo "gmp required to be installed" && exit 1)
 
 # Download.
@@ -33,8 +32,10 @@ fi
 # Verify and extract.
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-# Niels Möller <nisse@lysator.liu.se>, GnuPG keyid: F3599FF828C67298
-gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
+if [ -x /usr/local/bin/gpgv ]; then
+    # Niels Möller <nisse@lysator.liu.se>, GnuPG keyid: F3599FF828C67298
+    gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
+fi
 tar xzf $TARFILE
 
 # Configure.

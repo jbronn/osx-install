@@ -16,9 +16,6 @@ KEYRING=$INSTALL/keyring/$NAME.gpg
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 
-# Check prereqs.
-test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
-
 # Download.
 mkdir -p $BUILD
 cd $BUILD
@@ -32,8 +29,11 @@ fi
 # Verify and extract.
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-# Bruno Haible (Open Source Development) <bruno@clisp.org>, GnuPG keyid: F5BE8B267C6A406D
-gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
+# Verify signature if gpgv is available.
+if [ -x /usr/local/bin/gpgv ]; then
+    # Bruno Haible (Open Source Development) <bruno@clisp.org>, GnuPG keyid: F5BE8B267C6A406D
+    gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
+fi
 tar xzf $TARFILE
 
 # Configure.

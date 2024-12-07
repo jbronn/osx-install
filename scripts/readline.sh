@@ -33,11 +33,13 @@ if [ ! -r $TARFILE.sig ]; then
 fi
 
 # Verify and extract.
-test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-# Chet Ramey <chet@cwru.edu>, GnuPG key id: BB5869F064EA74AB
-gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
+# Verify signature if gpgv is available.
+if [ -x /usr/local/bin/gpgv ]; then
+    # Chet Ramey <chet@cwru.edu>, GnuPG key id: BB5869F064EA74AB
+    gpgv -v --keyring $KEYRING $TARFILE.sig $TARFILE
+fi
 tar xzf $TARFILE
 
 # Download, verify, and apply the patches.
