@@ -35,6 +35,7 @@ cd icu/source
 CFLAGS="-O2" \
 ./configure \
   --disable-samples \
+  --enable-rpath \
   --enable-shared \
   --enable-static \
   --with-library-bits=64

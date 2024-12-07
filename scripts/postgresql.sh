@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=postgresql
 IDENTIFIER="org.postgresql.pkg.postgresql"
-VERSION=15.2
+VERSION=17.2
 VERNAME=$NAME-$VERSION
-CHKSUM=99a2171fc3d6b5b5f56b757a7a3cb85d509a38e4273805def23941ed2b8468c7
+CHKSUM=82ef27c0af3751695d7f64e2d963583005fbb6a0c3df63d0e4b42211d7021164
 TARFILE=$VERNAME.tar.bz2
 URL=https://ftp.postgresql.org/pub/source/v$VERSION/$VERNAME.tar.bz2
 
@@ -16,6 +16,8 @@ STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 
 # Check prereqs.
+test -r /usr/local/lib/libicui18n.dylib || \
+    (echo "icu4c package is required" && exit 1)
 test -r /usr/local/lib/libssl.dylib || \
     (echo "openssl package is required" && exit 1)
 
@@ -34,15 +36,17 @@ tar xzf $TARFILE
 # Configure.
 cd $VERNAME
 ./configure \
-    CFLAGS=-I/usr/local/include \
+    CPPFLAGS=-I/usr/local/include \
     LDFLAGS=-L/usr/local/lib \
     MACOSX_DEPLOYMENT_TARGET=$(sw_vers | grep ^ProductVersion | awk '{ print $2 }') \
+    PG_SYSROOT=$(xcrun --show-sdk-path) \
     --prefix=/usr/local \
     --disable-debug \
     --enable-dtrace \
+    --enable-nls \
     --enable-thread-safety \
     --with-bonjour \
-    --with-gssapi \
+    --with-icu \
     --with-ldap \
     --with-libxml \
     --with-libxslt \
@@ -56,9 +60,12 @@ cd $VERNAME
 # Compile and stage.
 make clean
 make
-make check || true
+# "macOS's “System Integrity Protection” (SIP) feature breaks make check, because it prevents passing the needed
+#  setting of `DYLD_LIBRARY_PATH` down to the executables being tested. You can work around that by doing
+#  `make install` before `make check`. Most PostgreSQL developers just turn off SIP, though."
+# make check
 rm -fr $STAGING
-make install-world DESTDIR=$STAGING
+make install-world-bin DESTDIR=$STAGING
 
 # Package.
 rm -f $PKG $INSTALL/pkg/$NAME.pkg
