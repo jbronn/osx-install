@@ -8,7 +8,7 @@ VERSION=1.0.27
 VERNAME=$NAME-$VERSION
 CHKSUM=ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575
 TARFILE=$VERNAME.tar.bz2
-URL=https://github.com/libusb/libusb/releases/download/v1.0.27/$TARFILE
+URL=https://github.com/libusb/libusb/releases/download/v$VERSION/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
