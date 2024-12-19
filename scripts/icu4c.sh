@@ -15,6 +15,7 @@ URL=https://github.com/unicode-org/icu/releases/download/release-$(echo $VERSION
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
+KEYRING=$INSTALL/keyring/$NAME.gpg
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 
@@ -24,16 +25,26 @@ cd $BUILD
 if [ ! -r $TARFILE ]; then
     curl -LO $URL
 fi
+if [ ! -r $TARFILE.asc ]; then
+    curl -LO $URL.asc
+fi
 
 # Verify checksum and extract.
 rm -fr icu
 shasum -a 256 -c <(printf "${CHKSUM}  ${TARFILE}\n")
+# GnuPG 2 required to verify.
+if [ -x /usr/local/bin/gpgv ] && gpgv --version | head -n1 | awk '{ print $3 }' | grep -q ^2\.; then
+    # ICU Release Robot <icu-robot@unicode.org>, GnuPG keyid: E52F07877A5805F9AF4AB0ACD46C5610D06E7001
+    gpgv -v --keyring $KEYRING $TARFILE.asc $TARFILE
+fi
 tar xzf $TARFILE
 
 # Configure.
 cd icu/source
 CFLAGS="-O2" \
 ./configure \
+  --disable-debug \
+  --disable-dependency-tracking \
   --disable-samples \
   --enable-rpath \
   --enable-shared \
