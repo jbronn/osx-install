@@ -3,9 +3,9 @@ set -euxo pipefail
 
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=emacs
-VERSION=29.4
+VERSION=30.1
 VERNAME=$NAME-$VERSION
-CHKSUM=ba897946f94c36600a7e7bb3501d27aa4112d791bfe1445c61ed28550daca235
+CHKSUM=6ccac1ae76e6af93c6de1df175e8eb406767c23da3dd2a16aa67e3124a6f138f
 TARFILE=$VERNAME.tar.xz
 URL=https://ftp.gnu.org/gnu/emacs/$TARFILE
 

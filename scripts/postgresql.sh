@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=postgresql
 IDENTIFIER="org.postgresql.pkg.postgresql"
-VERSION=17.2
+VERSION=17.4
 VERNAME=$NAME-$VERSION
-CHKSUM=82ef27c0af3751695d7f64e2d963583005fbb6a0c3df63d0e4b42211d7021164
+CHKSUM=c4605b73fea11963406699f949b966e5d173a7ee0ccaef8938dec0ca8a995fe7
 TARFILE=$VERNAME.tar.bz2
 URL=https://ftp.postgresql.org/pub/source/v$VERSION/$VERNAME.tar.bz2
 
