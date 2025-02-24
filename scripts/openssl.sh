@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=openssl
 IDENTIFIER="org.openssl.pkg.${NAME}"
-VERSION=3.4.0
+VERSION=3.4.1
 VERNAME=$NAME-$VERSION
-CHKSUM=e15dda82fe2fe8139dc2ac21a36d4ca01d5313c75f99f46c4e8a27709b7294bf
+CHKSUM=002a2d6b30b58bf4bea46c43bdd96365aaf8daa6c428782aa4feee06da197df3
 TARFILE=$VERNAME.tar.gz
 URL=https://www.openssl.org/source/$TARFILE
 

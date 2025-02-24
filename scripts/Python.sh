@@ -4,11 +4,11 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=Python
 IDENTIFIER="org.python.pkg.python3"
-VERSION=3.13.1
+VERSION=3.13.2
 VERMAJ="${VERSION:0:3}"
 VEREXTRA=""
 VERNAME=${NAME}-${VERSION}${VEREXTRA}
-CHKSUM=9cf9427bee9e2242e3877dd0f6b641c1853ca461f39d6503ce260a59c80bf0d9
+CHKSUM=d984bcc57cd67caab26f7def42e523b1c015bbc5dc07836cf4f0b63fa159eb56
 TARFILE=$VERNAME.tar.xz
 URL=https://www.python.org/ftp/python/$VERSION/$TARFILE
 
@@ -112,11 +112,6 @@ make
 #     raise AssertionError(msg)
 # AssertionError: timeout (300.0 seconds)
 #
-## test_ssl.py
-#
-# Issues with OpenSSL 3.4.0: https://github.com/python/cpython/issues/127026
-#
-#
 ## test_venv.py
 #
 # ======================================================================
@@ -134,7 +129,6 @@ rm -f \
     Lib/test/test_external_inspection.py \
     Lib/test/test_popen.py \
     Lib/test/test_signal.py \
-    Lib/test/test_ssl.py \
     Lib/test/test_venv.py
 
 # Test
