@@ -4,12 +4,12 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=pypa
 IDENTIFIER="org.python.pkg.pypa"
-VERSION=25.2.0
+VERSION=25.3.0
 VERNAME=$NAME-$VERSION
 PYPI_URL=https://pypi.org/pypi
 
 # Preparations.
-SETUPTOOLS_VERSION=75.8.0
+SETUPTOOLS_VERSION=76.0.0
 PIP_VERSION=25.0.1
 PY3_VERSION=3.13
 WHEEL_VERSION=0.45.1
@@ -45,7 +45,6 @@ PY3_BIN=$PY3_STAGING/bin
 PY3_LIB=$PY3_STAGING/lib/python$PY3_VERSION/site-packages
 
 rm -fr $STAGING
-mkdir -p $STAGING/usr/local/bin
 
 mkdir -p $PY3_BIN $PY3_LIB
 unzip $SETUPTOOLS_WHEEL -d $PY3_LIB
