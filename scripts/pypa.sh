@@ -4,13 +4,13 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=pypa
 IDENTIFIER="org.python.pkg.pypa"
-VERSION=25.3.0
+VERSION=25.8.0
 VERNAME=$NAME-$VERSION
 PYPI_URL=https://pypi.org/pypi
 
 # Preparations.
-SETUPTOOLS_VERSION=76.0.0
-PIP_VERSION=25.0.1
+SETUPTOOLS_VERSION=80.9.0
+PIP_VERSION=25.2
 PY3_VERSION=3.13
 WHEEL_VERSION=0.45.1
 

@@ -4,15 +4,15 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=texinfo
 IDENTIFIER="org.gnu.pkg.${NAME}"
-VERSION=7.1
+VERSION=7.2
 VERNAME=$NAME-$VERSION
-CHKSUM=deeec9f19f159e046fdf8ad22231981806dac332cc372f1c763504ad82b30953
+CHKSUM=0329d7788fbef113fa82cb80889ca197a344ce0df7646fe000974c5d714363a6
 TARFILE=$VERNAME.tar.xz
 URL=https://ftp.gnu.org/gnu/texinfo/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
-KEYRING=$INSTALL/keyring/$NAME.gpg
+KEYRING=$INSTALL/keyring/gnu.gpg
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 

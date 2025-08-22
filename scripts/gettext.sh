@@ -4,15 +4,15 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=gettext
 IDENTIFIER="org.gnu.pkg.${NAME}"
-VERSION=0.22.5
+VERSION=0.26
 VERNAME=$NAME-$VERSION
-CHKSUM=fe10c37353213d78a5b83d48af231e005c4da84db5ce88037d88355938259640
+CHKSUM=d1fb86e260cfe7da6031f94d2e44c0da55903dbae0a2fa0fae78c91ae1b56f00
 TARFILE=$VERNAME.tar.xz
 URL=https://ftp.gnu.org/gnu/gettext/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
-KEYRING=$INSTALL/keyring/$NAME.gpg
+KEYRING=$INSTALL/keyring/gnu.gpg
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 
@@ -38,6 +38,7 @@ tar xzf $TARFILE
 
 # Configure.
 cd $VERNAME
+export am_cv_func_iconv_works=yes
 ./configure \
     --prefix=/usr/local \
     --disable-charp \

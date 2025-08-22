@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=postgresql
 IDENTIFIER="org.postgresql.pkg.postgresql"
-VERSION=17.4
+VERSION=17.6
 VERNAME=$NAME-$VERSION
-CHKSUM=c4605b73fea11963406699f949b966e5d173a7ee0ccaef8938dec0ca8a995fe7
+CHKSUM=e0630a3600aea27511715563259ec2111cd5f4353a4b040e0be827f94cd7a8b0
 TARFILE=$VERNAME.tar.bz2
 URL=https://ftp.postgresql.org/pub/source/v$VERSION/$VERNAME.tar.bz2
 
@@ -35,10 +35,10 @@ tar xzf $TARFILE
 
 # Configure.
 cd $VERNAME
+export MACOSX_DEPLOYMENT_TARGET=$(sw_vers | grep ^ProductVersion | awk '{ print $2 }')
 ./configure \
     CPPFLAGS=-I/usr/local/include \
     LDFLAGS=-L/usr/local/lib \
-    MACOSX_DEPLOYMENT_TARGET=$(sw_vers | grep ^ProductVersion | awk '{ print $2 }') \
     PG_SYSROOT=$(xcrun --show-sdk-path) \
     --prefix=/usr/local \
     --disable-debug \

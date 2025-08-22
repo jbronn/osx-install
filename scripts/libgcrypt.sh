@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=libgcrypt
 IDENTIFIER="org.gnupg.pkg.${NAME}"
-VERSION=1.11.0
+VERSION=1.11.2
 VERNAME=$NAME-$VERSION
-CHKSUM=09120c9867ce7f2081d6aaa1775386b98c2f2f246135761aae47d81f58685b9c
+CHKSUM=6ba59dd192270e8c1d22ddb41a07d95dcdbc1f0fb02d03c4b54b235814330aac
 TARFILE=$VERNAME.tar.bz2
 URL=https://gnupg.org/ftp/gcrypt/libgcrypt/$TARFILE
 

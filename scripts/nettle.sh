@@ -4,15 +4,15 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=nettle
 IDENTIFIER="org.gnu.pkg.${NAME}"
-VERSION=3.10
+VERSION=3.10.2
 VERNAME=$NAME-$VERSION
-CHKSUM=b4c518adb174e484cb4acea54118f02380c7133771e7e9beb98a0787194ee47c
+CHKSUM=fe9ff51cb1f2abb5e65a6b8c10a92da0ab5ab6eaf26e7fc2b675c45f1fb519b5
 TARFILE=$VERNAME.tar.gz
 URL=https://ftp.gnu.org/gnu/nettle/$TARFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
-KEYRING=$INSTALL/keyring/$NAME.gpg
+KEYRING=$INSTALL/keyring/gnu.gpg
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 

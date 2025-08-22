@@ -4,19 +4,19 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=readline
 IDENTIFIER="org.gnu.pkg.${NAME}"
-VERSION=8.2
+VERSION=8.3
 VERNAME=$NAME-$VERSION
-CHKSUM=3feb7171f16a84ee82ca18a36d7b9be109a52c04f492a053331d7d1095007c35
+CHKSUM=fe5383204467828cd495ee8d1d3c037a7eba1389c22bc6a041f627976f9061cc
 TARFILE=$VERNAME.tar.gz
 URL=https://ftp.gnu.org/gnu/readline/$TARFILE
 
 COMPACTVERSION=$(echo $VERSION | tr -d .)
 PATCHURL=https://ftp.gnu.org/gnu/readline/$VERNAME-patches
-PATCHVERSION=13
+PATCHVERSION=1
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
-KEYRING=$INSTALL/keyring/$NAME.gpg
+KEYRING=$INSTALL/keyring/gnu.gpg
 STAGING=$INSTALL/stage/$VERNAME-$PATCHVERSION
 PKGDIR=$INSTALL/pkg
 PKG=$PKGDIR/$VERNAME-$PATCHVERSION.pkg

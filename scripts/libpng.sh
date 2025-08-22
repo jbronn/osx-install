@@ -4,10 +4,10 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=libpng
 IDENTIFIER="org.libpng.pkg.libpng"
-VERSION=1.6.37
+VERSION=1.6.50
 VERNAME=$NAME-$VERSION
-CHKSUM=daeb2620d829575513e35fecc83f0d3791a620b9b93d800b763542ece9390fb4
-TARFILE=$VERNAME.tar.gz
+CHKSUM=4df396518620a7aa3651443e87d1b2862e4e88cad135a8b93423e01706232307
+TARFILE=$VERNAME.tar.xz
 URL=http://prdownloads.sourceforge.net/libpng/$TARFILE
 
 # Preparations.
@@ -25,7 +25,7 @@ fi
 # Verify and extract.
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-tar xzf $TARFILE
+tar xJf $TARFILE
 
 # Configure.
 cd $VERNAME

@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=pinentry
 IDENTIFIER="org.gnupg.pkg.${NAME}"
-VERSION=1.3.1
+VERSION=1.3.2
 VERNAME=$NAME-$VERSION
-CHKSUM=bc72ee27c7239007ab1896c3c2fae53b076e2c9bd2483dc2769a16902bce8c04
+CHKSUM=8e986ed88561b4da6e9efe0c54fa4ca8923035c99264df0b0464497c5fb94e9e
 TARFILE=$VERNAME.tar.bz2
 URL=https://gnupg.org/ftp/gcrypt/pinentry/$TARFILE
 

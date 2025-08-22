@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=libusb
 IDENTIFIER="info.libusb.pkg.${NAME}"
-VERSION=1.0.27
+VERSION=1.0.29
 VERNAME=$NAME-$VERSION
-CHKSUM=ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575
+CHKSUM=5977fc950f8d1395ccea9bd48c06b3f808fd3c2c961b44b0c2e6e29fc3a70a85
 TARFILE=$VERNAME.tar.bz2
 URL=https://github.com/libusb/libusb/releases/download/v$VERSION/$TARFILE
 

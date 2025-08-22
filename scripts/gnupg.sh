@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=gnupg
 IDENTIFIER="org.gnupg.pkg.${NAME}"
-VERSION=2.4.7
+VERSION=2.4.8
 VERNAME=$NAME-$VERSION
-CHKSUM=7b24706e4da7e0e3b06ca068231027401f238102c41c909631349dcc3b85eb46
+CHKSUM=b58c80d79b04d3243ff49c1c3fc6b5f83138eb3784689563bcdd060595318616
 TARFILE=$VERNAME.tar.bz2
 URL=https://gnupg.org/ftp/gcrypt/gnupg/$TARFILE
 

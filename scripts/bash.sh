@@ -4,19 +4,19 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=bash
 IDENTIFIER="org.gnu.pkg.${NAME}"
-VERSION=5.2
+VERSION=5.3
 VERNAME=$NAME-$VERSION
-CHKSUM=a139c166df7ff4471c5e0733051642ee5556c1cc8a4a78f145583c5c81ab32fb
+CHKSUM=0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba
 TARFILE=$VERNAME.tar.gz
 URL=https://ftp.gnu.org/gnu/bash/$TARFILE
 
 COMPACTVERSION=$(echo $VERSION | tr -d .)
 PATCHURL=https://ftp.gnu.org/gnu/bash/$VERNAME-patches
-PATCHVERSION=37
+PATCHVERSION=3
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
-KEYRING=$INSTALL/keyring/$NAME.gpg
+KEYRING=$INSTALL/keyring/gnu.gpg
 STAGING=$INSTALL/stage/$VERNAME-$PATCHVERSION
 PKGDIR=$INSTALL/pkg
 PKG=$PKGDIR/$VERNAME-$PATCHVERSION.pkg

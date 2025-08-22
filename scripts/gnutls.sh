@@ -4,16 +4,16 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=gnutls
 IDENTIFIER="org.gnu.pkg.${NAME}"
-VERSION=3.8.9
+VERSION=3.8.10
 VERMAJ=$(echo "${VERSION}" | awk -F. '{ print $1 "." $2 }')
 VERNAME=${NAME}-${VERSION}
-CHKSUM=69e113d802d1670c4d5ac1b99040b1f2d5c7c05daec5003813c049b5184820ed
+CHKSUM=db7fab7cce791e7727ebbef2334301c821d79a550ec55c9ef096b610b03eb6b7
 TARFILE=${VERNAME}.tar
 URL=https://www.gnupg.org/ftp/gcrypt/gnutls/v${VERMAJ}/${TARFILE}
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
-KEYRING=$INSTALL/keyring/$NAME.gpg
+KEYRING=$INSTALL/keyring/gnu.gpg
 STAGING=$INSTALL/stage/$VERNAME
 PKG=$INSTALL/pkg/$VERNAME.pkg
 

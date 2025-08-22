@@ -4,9 +4,9 @@ set -ex
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=xz
 IDENTIFIER="org.tukaani.pkg.xz"
-VERSION=5.6.3
+VERSION=5.8.1
 VERNAME=$NAME-$VERSION
-CHKSUM=b1d45295d3f71f25a4c9101bd7c8d16cb56348bbef3bbc738da0351e17c73317
+CHKSUM=507825b599356c10dca1cd720c9d0d0c9d5400b9de300af00e4d1ea150795543
 TARFILE=$VERNAME.tar.gz
 URL=https://tukaani.org/xz/$TARFILE
 

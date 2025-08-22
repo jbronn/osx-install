@@ -4,11 +4,11 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=Python
 IDENTIFIER="org.python.pkg.python3"
-VERSION=3.13.2
+VERSION=3.13.7
 VERMAJ="${VERSION:0:4}"
 VEREXTRA=""
 VERNAME=${NAME}-${VERSION}${VEREXTRA}
-CHKSUM=d984bcc57cd67caab26f7def42e523b1c015bbc5dc07836cf4f0b63fa159eb56
+CHKSUM=5462f9099dfd30e238def83c71d91897d8caa5ff6ebc7a50f14d4802cdaaa79a
 TARFILE=$VERNAME.tar.xz
 URL=https://www.python.org/ftp/python/$VERSION/$TARFILE
 
