@@ -49,8 +49,8 @@ tar xJf $TARFILE
 
 # Configure.
 cd $VERNAME
+export MACOSX_DEPLOYMENT_TARGET=$(sw_vers | grep ^ProductVersion | awk '{ print $2 }')
 ./configure \
-    MACOSX_DEPLOYMENT_TARGET=$(sw_vers | grep ^ProductVersion | awk '{ print $2 }') \
     --prefix=/usr/local \
     --enable-ipv6 \
     --enable-framework \

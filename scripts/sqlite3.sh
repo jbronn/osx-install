@@ -4,15 +4,15 @@ set -ex
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=sqlite3
 IDENTIFIER="org.sqlite.pkg.sqlite3"
-VERSION=3.47.1
-VERNUM=3470100
+VERSION=3.50.4
+VERNUM=3500400
 VERNAME=sqlite-src-$VERNUM
-CHKSUM=416a6f45bf2cacd494b208fdee1beda509abda951d5f47bc4f2792126f01b452
+CHKSUM=a3db587a1b92ee5ddac2f66b3edb41b26f9c867275782d46c3a088977d6a5b18
 SRCZIPFILE=$VERNAME.zip
-SRCCHKSUM=572457f02b03fea226a6cde5aafd55a0a6737786bcb29e3b85bfb21918b52ce7
+SRCCHKSUM=b7b4dc060f36053902fb65b344bbbed592e64b2291a26ac06fe77eec097850e9
 TARFILE=sqlite-autoconf-$VERNUM.tar.gz
-URL=https://sqlite.org/2024/$TARFILE
-SRCURL=https://sqlite.org/2024/$SRCZIPFILE
+URL=https://sqlite.org/2025/$TARFILE
+SRCURL=https://sqlite.org/2025/$SRCZIPFILE
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
@@ -42,17 +42,11 @@ tar xzf ../$TARFILE
 CFLAGS="-DSQLITE_ENABLE_API_ARMOR -DSQLITE_ENABLE_COLUMN_METADATA -DSQLITE_ENABLE_DBSTAT_VTAB -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_PARENTHESIS -DSQLITE_ENABLE_GEOPOLY -DSQLITE_ENABLE_MATH_FUNCTIONS -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_PREUPDATE_HOOK -DSQLITE_ENABLE_MEMORY_MANAGEMENT -DSQLITE_ENABLE_RTREE -DSQLITE_ENABLE_STAT4 -DSQLITE_ENABLE_UNLOCK_NOTIFY -DSQLITE_DISABLE_DIRSYNC -DSQLITE_LIKE_DOESNT_MATCH_BLOBS -DSQLITE_MAX_VARIABLE_NUMBER=250000 -DSQLITE_SECURE_DELETE -DSQLITE_USE_URI" \
         ./configure \
         --prefix=/usr/local \
-        --disable-dependency-tracking \
-        --disable-static \
-        --enable-all \
-        --enable-dynamic-extensions \
-        --enable-fts4 \
-        --enable-fts5 \
+        --disable-editline \
+        --enable-load-extension \
         --enable-readline \
-        --enable-releasemode \
         --enable-session \
-        --enable-threadsafe \
-        --enable-threads-override-locks
+        --enable-threadsafe
 
 # Compile and stage.
 make clean
