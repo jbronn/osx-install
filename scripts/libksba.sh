@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=libksba
 IDENTIFIER="org.gnupg.pkg.${NAME}"
-VERSION=1.6.7
+VERSION=1.6.8
 VERNAME=$NAME-$VERSION
-CHKSUM=cf72510b8ebb4eb6693eef765749d83677a03c79291a311040a5bfd79baab763
+CHKSUM=0f4510f1c7a679c3545990a31479f391ad45d84e039176309d42f80cf41743f5
 TARFILE=$VERNAME.tar.bz2
 URL=https://gnupg.org/ftp/gcrypt/libksba/$TARFILE
 
