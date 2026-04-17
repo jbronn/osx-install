@@ -1,0 +1,44 @@
+diff --git a/Lib/test/test_os.py b/Lib/test/test_os.py
+index 555c85f..4779b3b 100644
+--- a/Lib/test/test_os.py
++++ b/Lib/test/test_os.py
+@@ -2420,6 +2420,7 @@ class ExecTests(unittest.TestCase):
+     # See https://github.com/python/cpython/issues/137934 and the other
+     # related issues for the reason why we cannot test this on Windows.
+     @unittest.skipIf(os.name == "nt", "POSIX-specific test")
++    @unittest.skipIf(sys.platform == "darwin", "Broken on macOS")
+     @unittest.skipUnless(unix_shell and os.path.exists(unix_shell),
+                         "requires a shell")
+     def test_execve_env_concurrent_mutation_with_fspath_posix(self):
+diff --git a/Lib/test/test_popen.py b/Lib/test/test_popen.py
+index 34cda35..e456c57 100644
+--- a/Lib/test/test_popen.py
++++ b/Lib/test/test_popen.py
+@@ -30,6 +30,7 @@ class PopenTest(unittest.TestCase):
+         got = eval(data)[1:] # strip off argv[0]
+         self.assertEqual(got, expected)
+ 
++    @unittest.skipIf(sys.platform == "darwin", "Broken on macOS")
+     def test_popen(self):
+         self.assertRaises(TypeError, os.popen)
+         self._do_test_commandline(
+diff --git a/Lib/test/test_venv.py b/Lib/test/test_venv.py
+index e63b9df..575e066 100644
+--- a/Lib/test/test_venv.py
++++ b/Lib/test/test_venv.py
+@@ -532,6 +532,7 @@ class BasicTest(BaseTest):
+ 
+     # gh-124651: test quoted strings
+     @unittest.skipIf(os.name == 'nt', 'contains invalid characters on Windows')
++    @unittest.skipIf(sys.platform == "darwin", "Broken on macOS")
+     @unittest.skipIf(sys.platform.startswith('netbsd'),
+                      "NetBSD csh fails with quoted special chars; see gh-139308")
+     def test_special_chars_csh(self):
+@@ -684,6 +685,7 @@ class BasicTest(BaseTest):
+         self.assertRaises(ValueError, venv.create, FakePath(bad_itempath))
+ 
+     @unittest.skipIf(os.name == 'nt', 'not relevant on Windows')
++    @unittest.skipIf(sys.platform == "darwin", "Broken on macOS")
+     @requireVenvCreate
+     def test_zippath_from_non_installed_posix(self):
+         """

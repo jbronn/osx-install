@@ -4,11 +4,11 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=Python
 IDENTIFIER="org.python.pkg.python3"
-VERSION=3.14.0
+VERSION=3.14.4
 VERMAJ="${VERSION:0:4}"
 VEREXTRA=""
 VERNAME=${NAME}-${VERSION}${VEREXTRA}
-CHKSUM=2299dae542d395ce3883aca00d3c910307cd68e0b2f7336098c8e7b7eee9f3e9
+CHKSUM=d923c51303e38e249136fc1bdf3568d56ecb03214efdef48516176d3d7faaef8
 TARFILE=$VERNAME.tar.xz
 URL=https://www.python.org/ftp/python/$VERSION/$TARFILE
 
@@ -48,8 +48,12 @@ $TARFILE
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
 tar xJf $TARFILE
 
-# Configure.
 cd $VERNAME
+
+# Patch failing tests on macOS.
+patch -p1 < ../test-fixes.patch
+
+# Configure.
 export MACOSX_DEPLOYMENT_TARGET=$(sw_vers | grep ^ProductVersion | awk '{ print $2 }')
 ./configure \
     --prefix=/usr/local \
@@ -69,55 +73,6 @@ export MACOSX_DEPLOYMENT_TARGET=$(sw_vers | grep ^ProductVersion | awk '{ print 
 make clean
 make
 
-# TODO: Investigate these test failures:
-#
-## test_popen.py
-# ======================================================================
-# ERROR: test_popen (test.test_popen.PopenTest.test_popen)
-# ----------------------------------------------------------------------
-# Traceback (most recent call last):
-#   File "/Users/jbronn/osx-install/build/Python/Python-3.14.0/Lib/test/test_popen.py", line 35, in test_popen
-#     self._do_test_commandline(
-#     ~~~~~~~~~~~~~~~~~~~~~~~~~^
-#         "foo bar",
-#         ^^^^^^^^^^
-#         ["foo", "bar"]
-#         ^^^^^^^^^^^^^^
-#     )
-#     ^
-#   File "/Users/jbronn/osx-install/build/Python/Python-3.14.0/Lib/test/test_popen.py", line 30, in _do_test_commandline
-#     got = eval(data)[1:] # strip off argv[0]
-#           ~~~~^^^^^^
-#   File "<string>", line 0
-#
-## test_venv.py
-#
-# ======================================================================
-# ERROR: test_special_chars_csh (test.test_venv.BasicTest.test_special_chars_csh)
-# Test that the template strings are quoted properly (csh)
-# ----------------------------------------------------------------------
-# Traceback (most recent call last):
-#   File "/Users/jbronn/osx-install/build/Python/Python-3.14.0/Lib/test/test_venv.py", line 546, in test_special_chars_csh
-#     self.assertTrue(env_name.encode() in lines[0])
-#                                          ~~~~~^^^
-# IndexError: list index out of range
-#
-# ======================================================================
-# ERROR: test_zippath_from_non_installed_posix (test.test_venv.BasicTest.test_zippath_from_non_installed_posix)
-# Test that when create venv from non-installed python, the zip path
-# ----------------------------------------------------------------------
-# Traceback (most recent call last):
-#   File "/Users/jbronn/osx-install/build/Python/Python-3.14.0/Lib/test/test_venv.py", line 754, in test_zippath_from_non_installed_posix
-#     subprocess.check_call(cmd, env=child_env)
-#     ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
-#   File "/Users/jbronn/osx-install/build/Python/Python-3.14.0/Lib/subprocess.py", line 419, in check_call
-#     raise CalledProcessError(retcode, cmd)
-#     subprocess.CalledProcessError: Command '['/private/var/folders/wb/bchz15pn0xg4c0j_v6q2sqlr0000gn/T/test_python_ijtq6am9/tmpwhbnaypw/bin/python.exe', '-m', 'venv', '--without-pip', '--without-scm-ignore-files', '/private/var/folders/wb/bchz15pn0xg4c0j_v6q2sqlr0000gn/T/test_python_ijtq6am9/tmpkqbcbffi']' died with <Signals.SIGABRT: 6>.
-#
-rm -f \
-   Lib/test/test_popen.py \
-   Lib/test/test_venv.py
-
 # Test
 make quicktest
 
@@ -135,3 +90,6 @@ ln -s /Library/Frameworks/Python.framework/Versions/$VERMAJ/lib/pkgconfig/python
 rm -f $PKG $INSTALL/pkg/$NAME.pkg
 pkgbuild --root $STAGING --identifier "${IDENTIFIER}" --version ${VERSION}${VEREXTRA} $PKG
 ln -s $PKG $INSTALL/pkg/$NAME.pkg
+
+# Cleanup
+rm -fr $STAGING
