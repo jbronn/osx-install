@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=jansson
 IDENTIFIER="org.digip.pkg.${NAME}"
-VERSION=2.14.1
+VERSION=2.15.1
 VERNAME=$NAME-$VERSION
-CHKSUM=2521cd51a9641d7a4e457f7215a4cd5bb176f690bc11715ddeec483e85d9e2b3
+CHKSUM=0c7114dc0b2d22a670724a1f95922029d7077c19dbf79a584cb8084d2f267f2f
 TARFILE=$VERNAME.tar.gz
 URL=https://github.com/akheron/jansson/releases/download/v$VERSION/$TARFILE
 
