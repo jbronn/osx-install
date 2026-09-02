@@ -55,7 +55,9 @@ until [ "${PATCHINDEX}" = "${PATCHNUMS}" ]; do
         curl -O $PATCHURL/$PATCHFILE.sig
     fi
 
-    gpgv -v --keyring $KEYRING $PATCHFILE.sig $PATCHFILE
+    if [ -x /usr/local/bin/gpgv ]; then
+        gpgv -v --keyring $KEYRING $PATCHFILE.sig $PATCHFILE
+    fi
     patch -d $VERNAME -p0 <$PATCHFILE
 
     PATCHINDEX=$(expr ${PATCHINDEX} + 1)
