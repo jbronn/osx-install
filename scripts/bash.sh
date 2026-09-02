@@ -12,7 +12,7 @@ URL=https://ftp.gnu.org/gnu/bash/$TARFILE
 
 COMPACTVERSION=$(echo $VERSION | tr -d .)
 PATCHURL=https://ftp.gnu.org/gnu/bash/$VERNAME-patches
-PATCHVERSION=3
+PATCHVERSION=15
 
 # Preparations.
 BUILD=$INSTALL/build/$NAME
