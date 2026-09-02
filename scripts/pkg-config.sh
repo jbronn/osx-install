@@ -27,11 +27,12 @@ if [ ! -r $TARFILE.asc ]; then
 fi
 
 # Verify and extract.
-test -x /usr/local/bin/gpgv || (echo "GnuPG required for verification" && exit 1)
 rm -fr $VERNAME
 echo "${CHKSUM}  ${TARFILE}" | shasum -a 256 -c -
-# Dan Nicholson <nicholson.db@gmail.com>, GnuPG keyid: 023A4420C7EC6914
-gpgv -v --keyring $KEYRING $TARFILE.asc $TARFILE
+if [ -x /usr/local/bin/gpgv ]; then
+    # Dan Nicholson <nicholson.db@gmail.com>, GnuPG keyid: 023A4420C7EC6914
+    gpgv -v --keyring $KEYRING $TARFILE.asc $TARFILE
+fi
 tar xzf $TARFILE
 
 # Configure.
