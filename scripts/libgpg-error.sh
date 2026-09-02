@@ -4,9 +4,9 @@ set -euxo pipefail
 INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 NAME=libgpg-error
 IDENTIFIER="org.gnupg.pkg.${NAME}"
-VERSION=1.59
+VERSION=1.61
 VERNAME=$NAME-$VERSION
-CHKSUM=a19bc5087fd97026d93cb4b45d51638d1a25202a5e1fbc3905799f424cfa6134
+CHKSUM=7a85413f2bc354f4f8aa832b718af122e48965e9e0eb9012ee659c13c6385c93
 TARFILE=$VERNAME.tar.bz2
 URL=https://gnupg.org/ftp/gcrypt/libgpg-error/$TARFILE
 
